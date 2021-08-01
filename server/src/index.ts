@@ -6,6 +6,8 @@ import session from "express-session";
 import Redis from "ioredis";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
+import { PostCategoryResolver } from "./resolver/PostCategoryResolver";
+import { PostResolver } from "./resolver/PostResolver";
 import { UserResolver } from "./resolver/UserResolver";
 
 require("dotenv").config();
@@ -41,7 +43,7 @@ const main = async () => {
   await createConnection();
 
   const schema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, PostResolver, PostCategoryResolver],
   });
   const apolloServer = new ApolloServer({
     schema,

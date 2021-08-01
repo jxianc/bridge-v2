@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -17,8 +17,8 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class Post extends BaseEntity {
-  @Field(() => Int)
-  @PrimaryGeneratedColumn({ type: "bigint" })
+  @Field()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
@@ -29,15 +29,22 @@ export class Post extends BaseEntity {
   @Column()
   body!: string;
 
+  @Field()
+  @Column({ type: "int", default: 0 })
+  points!: number;
+
+  @Field(() => [Comment], { nullable: true })
   @OneToMany(() => Comment, (comment) => comment.post)
-  comments: Comment[];
+  comments?: Comment[];
 
   @OneToMany(() => PostPoint, (postPoint) => postPoint.post)
   postPoints: PostPoint[];
 
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts)
   user: User;
 
+  @Field(() => PostCategory)
   @ManyToOne(() => PostCategory, (postCategory) => postCategory.posts)
   postCategory: PostCategory;
 

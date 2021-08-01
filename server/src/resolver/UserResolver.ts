@@ -15,15 +15,7 @@ import bcrypt, { compare } from "bcryptjs";
 import { v4 } from "uuid";
 import { FORGET_PASSWORD_PREFIX } from "../constants";
 import { sendEmail } from "../utils/sendEmail";
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-
-  @Field()
-  message: string;
-}
+import { FieldError } from "../utils/common";
 
 @ObjectType()
 class UserResponse {

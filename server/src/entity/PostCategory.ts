@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -11,8 +11,8 @@ import { Post } from "./Post";
 @ObjectType()
 @Entity()
 export class PostCategory extends BaseEntity {
-  @Field(() => Int)
-  @PrimaryGeneratedColumn({ type: "bigint" })
+  @Field()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Field()

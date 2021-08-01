@@ -24,6 +24,10 @@ export class Comment extends BaseEntity {
   @Column()
   body!: string;
 
+  @Field()
+  @Column({ type: "int", default: 0 })
+  points!: number;
+
   @OneToMany(() => CommentPoint, (commentPoint) => commentPoint.comment)
   commentPoints: CommentPoint[];
 

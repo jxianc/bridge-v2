@@ -12,6 +12,9 @@ import {
 import { MyContext } from "../MyContext";
 import { registerValidator } from "../utils/registerValidator";
 import bcrypt, { compare } from "bcryptjs";
+import { v4 } from "uuid";
+import { FORGET_PASSWORD_PREFIX } from "../constants";
+import { sendEmail } from "../utils/sendEmail";
 
 @ObjectType()
 class FieldError {
@@ -159,5 +162,92 @@ export class UserResolver {
         resolve(true);
       })
     );
+  }
+
+  @Mutation(() => Boolean)
+  async forgotPassword(
+    @Arg("email") email: string,
+    @Ctx() { redis }: MyContext
+  ): Promise<Boolean> {
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      // email not in database, do nothing for security purpose
+      return true;
+    }
+
+    const token = v4();
+    await redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      user.id,
+      "ex",
+      1000 * 60 * 60 * 24 * 3
+    ); // 3days
+
+    await sendEmail(
+      email,
+      `
+      <a href="http://localhost:3000/change-password/${token}">reset password</a>
+    `
+    );
+
+    return true;
+  }
+
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Arg("token") token: string,
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { redis, req }: MyContext
+  ): Promise<UserResponse> {
+    if (newPassword.length <= 5) {
+      return {
+        errors: [
+          {
+            field: "newPassword",
+            message: "length must be greater than 5",
+          },
+        ],
+      };
+    }
+
+    const key = FORGET_PASSWORD_PREFIX + token;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "token has expired or is invalid",
+          },
+        ],
+      };
+    }
+
+    const userIdNum = parseInt(userId);
+    const user = await User.findOne({ where: { id: userIdNum } });
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "user no longer exists",
+          },
+        ],
+      };
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    newPassword = "";
+
+    await User.update({ id: userIdNum }, { password: hashedPassword });
+
+    await redis.del(key);
+
+    req.session!.userId = user.id;
+
+    return {
+      user,
+    };
   }
 }

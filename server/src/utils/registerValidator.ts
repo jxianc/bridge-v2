@@ -30,11 +30,11 @@ export const registerValidator = ({
       },
     ];
   }
-  if (password.length <= 8) {
+  if (password.length <= 5) {
     return [
       {
         field: "password",
-        message: "length must be greater than 8",
+        message: "length must be greater than 5",
       },
     ];
   }

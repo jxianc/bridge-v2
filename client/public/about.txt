@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Calistoga
+- Font Author: Copyright 2019 The Calistoga Project Authors (https://github.com/SorkinType/Calistoga)
+- Font Source: http://fonts.gstatic.com/s/calistoga/v5/6NUU8F2OJg6MeR7l4e0vtMYAwdRZfw.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL)

@@ -1,16 +1,53 @@
+import { ApolloServer } from "apollo-server-express";
+import connectRedis from "connect-redis";
+import cors from "cors";
 import express from "express";
+import session from "express-session";
+import Redis from "ioredis";
+import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
+import { UserResolver } from "./resolver/UserResolver";
 
 require("dotenv").config();
 
 const main = async () => {
   const app = express();
 
-  app.get("/", (_req, res) => {
-    res.send("hello world");
-  });
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+
+  const RedisStore = connectRedis(session);
+  const redis = new Redis();
+  app.use(
+    session({
+      name: process.env.SESSION_NAME,
+      store: new RedisStore({ client: redis, disableTouch: true }),
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365, //1 years
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "development" ? false : true,
+      },
+      saveUninitialized: false,
+      secret: process.env.SESSION_SECRET as string,
+      resave: false,
+    })
+  );
 
   await createConnection();
+
+  const schema = await buildSchema({
+    resolvers: [UserResolver],
+  });
+  const apolloServer = new ApolloServer({
+    schema,
+    context: ({ req, res }) => ({ req, res }),
+  });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(process.env.SERVER_PORT, () => {
     console.log(

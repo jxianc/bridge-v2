@@ -1,0 +1,3 @@
+# Bridge
+
+a social media web app using typescript, react, node, express, postgreSQL and more...

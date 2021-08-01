@@ -71,6 +71,7 @@ const Login: React.FC<loginProps> = ({}) => {
               type="submit"
               isLoading={isSubmitting}
               bg="#38EBC0"
+              color="black"
               _hover={{ bg: "#32d1ab" }}
               leftIcon={<BiLogIn />}
             >

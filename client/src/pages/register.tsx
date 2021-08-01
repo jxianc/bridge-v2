@@ -83,6 +83,7 @@ const Register: React.FC<registerProps> = ({}) => {
               type="submit"
               isLoading={isSubmitting}
               bg="#38EBC0"
+              color="black"
               _hover={{ bg: "#32d1ab" }}
               leftIcon={<FiUserPlus />}
             >

@@ -39,9 +39,6 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
     if (data && data.me) {
       setNavbarMenu(
         <>
-          <Box fontSize="xl" fontWeight="semibold" mr={4}>
-            {data.me.username}
-          </Box>
           <Button
             color="black"
             bg="#38EBC0"
@@ -85,6 +82,14 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
               </ModalFooter>
             </ModalContent>
           </Modal>
+          <Button
+            fontWeight="bold"
+            color="white"
+            bg="facebook.900"
+            _hover={{ bg: "#224987" }}
+          >
+            {data.me.username}
+          </Button>
         </>
       );
     } else {

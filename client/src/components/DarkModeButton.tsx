@@ -6,9 +6,10 @@ export const DarkModeButton = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   return (
     <IconButton
-      color="black"
-      bg="#38EBC0"
-      _hover={{ bg: "#32d1ab" }}
+      p={-1}
+      color="white"
+      bg="facebook.900"
+      _hover={{ bg: "#224987" }}
       aria-label="darkmode"
       icon={colorMode === "light" ? <FiSun /> : <FiMoon />}
       onClick={toggleColorMode}

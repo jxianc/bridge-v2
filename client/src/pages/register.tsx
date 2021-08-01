@@ -9,6 +9,7 @@ import { Box, Button, Link } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
 import { BrowserHead } from "../components/BrowserHead";
 import NextLink from "next/link";
+import { withApollo } from "../utils/withApollo";
 
 interface registerProps {}
 
@@ -94,4 +95,4 @@ const Register: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default Register;
+export default withApollo({ ssr: false })(Register);

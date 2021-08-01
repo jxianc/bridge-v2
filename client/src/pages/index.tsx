@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserHead } from "../components/BrowserHead";
 import { Navbar } from "../components/Navbar";
+import { withApollo } from "../utils/withApollo";
 
 const Index = () => {
   return (
@@ -12,4 +13,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withApollo({ ssr: true })(Index);

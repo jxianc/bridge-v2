@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Link, Spacer } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { NextPage } from "next";
+import { withApollo } from "../../utils/withApollo";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -88,4 +89,4 @@ const ChangePassword: NextPage<{ token: string }> = () => {
   );
 };
 
-export default ChangePassword;
+export default withApollo({ ssr: false })(ChangePassword);

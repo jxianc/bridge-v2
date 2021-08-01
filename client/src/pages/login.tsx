@@ -9,6 +9,7 @@ import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { BiLogIn } from "react-icons/bi";
 import NextLink from "next/link";
+import { withApollo } from "../utils/withApollo";
 
 interface loginProps {}
 
@@ -82,4 +83,4 @@ const Login: React.FC<loginProps> = ({}) => {
   );
 };
 
-export default Login;
+export default withApollo({ ssr: false })(Login);

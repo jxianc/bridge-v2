@@ -5,7 +5,7 @@ import React from "react";
 import { BrowserHead } from "../components/BrowserHead";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
-import { useLoginMutation } from "../generated/graphql";
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { BiLogIn } from "react-icons/bi";
 import NextLink from "next/link";
@@ -24,15 +24,15 @@ const Login: React.FC<loginProps> = ({}) => {
         onSubmit={async (values, { setErrors }) => {
           const response = await login({
             variables: values,
-            // update: (cache, { data }) => {
-            //   cache.writeQuery<MeQuery>({
-            //     query: MeDocument,
-            //     data: {
-            //       __typename: "Query",
-            //       me: data?.login.user,
-            //     },
-            //   });
-            // },
+            update: (cache, { data }) => {
+              cache.writeQuery<MeQuery>({
+                query: MeDocument,
+                data: {
+                  __typename: "Query",
+                  me: data?.login.user,
+                },
+              });
+            },
           });
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data.login.errors));
@@ -73,7 +73,7 @@ const Login: React.FC<loginProps> = ({}) => {
               _hover={{ bg: "#32d1ab" }}
               leftIcon={<BiLogIn />}
             >
-              Login
+              login
             </Button>
           </Form>
         )}

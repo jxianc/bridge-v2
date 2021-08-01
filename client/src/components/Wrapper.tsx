@@ -1,5 +1,7 @@
-import { Box } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
+import { GoChevronLeft } from "react-icons/go";
 import React from "react";
+import { useRouter } from "next/dist/client/router";
 
 export type WrapperVariant = "small" | "regular";
 
@@ -13,6 +15,8 @@ export const Wrapper: React.FC<WrapperProps> = ({
   title,
   children,
 }) => {
+  const router = useRouter();
+
   return (
     <Box
       maxW={variant === "regular" ? "800px" : "500px"}
@@ -22,15 +26,18 @@ export const Wrapper: React.FC<WrapperProps> = ({
       shadow="2xl"
       borderRadius={10}
     >
-      <Box
+      <HStack
         bg="facebook.900"
         color="white"
         fontSize="lg"
         fontWeight="bold"
         p={4}
       >
-        {title}
-      </Box>
+        <Box _hover={{ color: "#1BD3A7", cursor: "pointer" }}>
+          <GoChevronLeft size="2em" onClick={() => router.push("/")} />
+        </Box>
+        <Box>{title}</Box>
+      </HStack>
       <Box p={8} pt={6}>
         {children}
       </Box>

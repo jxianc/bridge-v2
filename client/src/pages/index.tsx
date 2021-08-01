@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserHead } from "../components/BrowserHead";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { Navbar } from "../components/Navbar";
 
 const Index = () => {
   return (
     <div>
       <BrowserHead />
+      <Navbar />
       <div>hello world</div>
-      <DarkModeSwitch />
     </div>
   );
 };

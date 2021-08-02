@@ -72,6 +72,12 @@ export type MutationChangePasswordArgs = {
   token: Scalars['String'];
 };
 
+export type PaginatedPosts = {
+  __typename?: 'PaginatedPosts';
+  posts: Array<Post>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Post = {
   __typename?: 'Post';
   id: Scalars['Float'];
@@ -107,13 +113,21 @@ export type PostResponse = {
 export type Query = {
   __typename?: 'Query';
   categories: Array<PostCategory>;
-  posts: Array<Post>;
-  postsByCategory: Array<Post>;
+  posts: PaginatedPosts;
+  postsByCategory: PaginatedPosts;
   me?: Maybe<User>;
 };
 
 
+export type QueryPostsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+};
+
+
 export type QueryPostsByCategoryArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
   categoryId: Scalars['Int'];
 };
 
@@ -283,48 +297,61 @@ export type MeQuery = (
   )> }
 );
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
 export type PostsQuery = (
   { __typename?: 'Query' }
-  & { posts: Array<(
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
-    ), postCategory: (
-      { __typename?: 'PostCategory' }
-      & Pick<PostCategory, 'id' | 'name'>
-    ), comments?: Maybe<Array<(
-      { __typename?: 'Comment' }
-      & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-    )>> }
-  )> }
+  & { posts: (
+    { __typename?: 'PaginatedPosts' }
+    & Pick<PaginatedPosts, 'hasMore'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
+      ), postCategory: (
+        { __typename?: 'PostCategory' }
+        & Pick<PostCategory, 'id' | 'name'>
+      ), comments?: Maybe<Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      )>> }
+    )> }
+  ) }
 );
 
 export type PostsByCategoryQueryVariables = Exact<{
   categoryId: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
 }>;
 
 
 export type PostsByCategoryQuery = (
   { __typename?: 'Query' }
-  & { postsByCategory: Array<(
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-    & { user: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
-    ), postCategory: (
-      { __typename?: 'PostCategory' }
-      & Pick<PostCategory, 'id' | 'name'>
-    ), comments?: Maybe<Array<(
-      { __typename?: 'Comment' }
-      & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-    )>> }
-  )> }
+  & { postsByCategory: (
+    { __typename?: 'PaginatedPosts' }
+    & Pick<PaginatedPosts, 'hasMore'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
+      ), postCategory: (
+        { __typename?: 'PostCategory' }
+        & Pick<PostCategory, 'id' | 'name'>
+      ), comments?: Maybe<Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      )>> }
+    )> }
+  ) }
 );
 
 export const RegularErrorFragmentDoc = gql`
@@ -657,32 +684,35 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const PostsDocument = gql`
-    query Posts {
-  posts {
-    id
-    title
-    body
-    points
-    user {
+    query Posts($limit: Int!, $cursor: String) {
+  posts(limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
       id
-      username
-      email
-      createdAt
-      updatedAt
-    }
-    postCategory {
-      id
-      name
-    }
-    comments {
-      id
+      title
       body
       points
+      user {
+        id
+        username
+        email
+        createdAt
+        updatedAt
+      }
+      postCategory {
+        id
+        name
+      }
+      comments {
+        id
+        body
+        points
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
-    createdAt
-    updatedAt
   }
 }
     `;
@@ -699,10 +729,12 @@ export const PostsDocument = gql`
  * @example
  * const { data, loading, error } = usePostsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
-export function usePostsQuery(baseOptions?: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
+export function usePostsQuery(baseOptions: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<PostsQuery, PostsQueryVariables>(PostsDocument, options);
       }
@@ -714,32 +746,35 @@ export type PostsQueryHookResult = ReturnType<typeof usePostsQuery>;
 export type PostsLazyQueryHookResult = ReturnType<typeof usePostsLazyQuery>;
 export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariables>;
 export const PostsByCategoryDocument = gql`
-    query PostsByCategory($categoryId: Int!) {
-  postsByCategory(categoryId: $categoryId) {
-    id
-    title
-    body
-    points
-    user {
+    query PostsByCategory($categoryId: Int!, $limit: Int!, $cursor: String) {
+  postsByCategory(categoryId: $categoryId, limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
       id
-      username
-      email
-      createdAt
-      updatedAt
-    }
-    postCategory {
-      id
-      name
-    }
-    comments {
-      id
+      title
       body
       points
+      user {
+        id
+        username
+        email
+        createdAt
+        updatedAt
+      }
+      postCategory {
+        id
+        name
+      }
+      comments {
+        id
+        body
+        points
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
-    createdAt
-    updatedAt
   }
 }
     `;
@@ -757,6 +792,8 @@ export const PostsByCategoryDocument = gql`
  * const { data, loading, error } = usePostsByCategoryQuery({
  *   variables: {
  *      categoryId: // value for 'categoryId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */

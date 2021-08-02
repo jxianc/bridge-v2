@@ -43,25 +43,74 @@ export class PostInput {
   postCategoryId: number;
 }
 
+@ObjectType()
+class PaginatedPosts {
+  @Field(() => [Post])
+  posts: Post[];
+
+  @Field()
+  hasMore: boolean;
+}
+
 @Resolver()
 export class PostResolver {
-  @Query(() => [Post])
-  async posts(): Promise<Array<Post>> {
-    return await Post.find({
-      relations: ["user", "postCategory", "comments"],
-      order: { createdAt: "DESC" },
-    });
+  @Query(() => PaginatedPosts)
+  async posts(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<PaginatedPosts> {
+    const actualLimit = Math.min(50, limit);
+    const actualLimitPlusOne = actualLimit + 1;
+
+    const posts = await getConnection()
+      .getRepository(Post)
+      .createQueryBuilder("p")
+      .where(cursor ? `p."createdAt" < :cursor` : "", {
+        cursor: new Date(parseInt(cursor as string)),
+      })
+      .leftJoinAndSelect("p.user", "user")
+      .leftJoinAndSelect("p.postCategory", "postCategory")
+      .orderBy(`p."createdAt"`, "DESC")
+      .limit(actualLimitPlusOne)
+      .getMany();
+
+    return {
+      posts: posts.slice(0, actualLimit),
+      hasMore: posts.length === actualLimitPlusOne,
+    };
   }
 
-  @Query(() => [Post])
+  @Query(() => PaginatedPosts)
   async postsByCategory(
-    @Arg("categoryId", () => Int) categoryId: number
-  ): Promise<Array<Post>> {
-    return await Post.find({
-      where: { postCategory: { id: categoryId } },
-      relations: ["user", "postCategory", "comments"],
-      order: { createdAt: "DESC" },
-    });
+    @Arg("categoryId", () => Int) categoryId: number,
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<PaginatedPosts> {
+    const actualLimit = Math.min(50, limit);
+    const actualLimitPlusOne = actualLimit + 1;
+
+    const posts = await getConnection()
+      .getRepository(Post)
+      .createQueryBuilder("p")
+      .where(
+        cursor
+          ? `p."createdAt" < :cursor and p."postCategoryId" = :categoryId `
+          : `p."postCategoryId" = :categoryId`,
+        {
+          cursor: new Date(parseInt(cursor as string)),
+          categoryId,
+        }
+      )
+      .leftJoinAndSelect("p.user", "user")
+      .leftJoinAndSelect("p.postCategory", "postCategory")
+      .orderBy(`p."createdAt"`, "DESC")
+      .limit(actualLimitPlusOne)
+      .getMany();
+
+    return {
+      posts: posts.slice(0, actualLimit),
+      hasMore: posts.length === actualLimitPlusOne,
+    };
   }
 
   @Mutation(() => PostResponse)

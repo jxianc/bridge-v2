@@ -1,28 +1,31 @@
-query Posts {
-  posts {
-    id
-    title
-    body
-    points
-    user {
+query Posts($limit: Int!, $cursor: String) {
+  posts(limit: $limit, cursor: $cursor) {
+    hasMore
+    posts {
       id
-      username
-      email
-      createdAt
-      updatedAt
-    }
-    postCategory {
-      id
-      name
-    }
-    comments {
-      id
+      title
       body
       points
+      user {
+        id
+        username
+        email
+        createdAt
+        updatedAt
+      }
+      postCategory {
+        id
+        name
+      }
+      comments {
+        id
+        body
+        points
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
-    createdAt
-    updatedAt
   }
 }

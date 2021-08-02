@@ -46,9 +46,9 @@ export class PostInput {
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  @UseMiddleware(isAuth)
+  @UseMiddleware()
   async posts() {
-    return await Post.find({ relations: ["user"] });
+    return await Post.find({ relations: ["user", "postCategory", "comments"] });
   }
 
   @Mutation(() => PostResponse)

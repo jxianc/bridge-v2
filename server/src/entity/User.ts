@@ -31,12 +31,13 @@ export class User extends BaseEntity {
   @Column({ nullable: false })
   password!: string;
 
-  @Field(() => [Post])
+  @Field(() => [Post], { nullable: true })
   @OneToMany(() => Post, (post) => post.user)
-  posts: Post[];
+  posts?: Post[];
 
+  @Field(() => [Comment], { nullable: true })
   @OneToMany(() => Comment, (comment) => comment.user)
-  comments: Comment[];
+  comments?: Comment[];
 
   @OneToMany(() => PostPoint, (postPoint) => postPoint.user)
   postPoints: PostPoint[];

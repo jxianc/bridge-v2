@@ -1,0 +1,21 @@
+query Posts {
+  posts {
+    id
+    title
+    body
+    points
+    user {
+      id
+      username
+      email
+      createdAt
+      updatedAt
+    }
+    postCategory {
+      id
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserHead } from "../components/BrowserHead";
+import { Layout } from "../components/homepage/Layout";
 import { Navbar } from "../components/Navbar";
 import { withApollo } from "../utils/withApollo";
 
@@ -8,7 +9,7 @@ const Index = () => {
     <div>
       <BrowserHead />
       <Navbar />
-      <div>hello world</div>
+      <Layout />
     </div>
   );
 };

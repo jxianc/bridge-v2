@@ -1,11 +1,10 @@
 import { Grid, GridItem } from "@chakra-ui/react";
 import React from "react";
 import { CategorySection } from "./CategorySection";
-import { PostSection } from "./PostSection";
 
 interface LayooutProps {}
 
-export const Layout: React.FC<LayooutProps> = ({}) => {
+export const Layout: React.FC<LayooutProps> = ({ children }) => {
   return (
     <Grid
       m="0 auto"
@@ -16,7 +15,7 @@ export const Layout: React.FC<LayooutProps> = ({}) => {
     >
       <>
         <GridItem colSpan={7} rowSpan={55}>
-          <PostSection />
+          {children}
         </GridItem>
         <GridItem colSpan={3} rowSpan={55} bg="beige">
           <CategorySection />

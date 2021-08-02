@@ -1,5 +1,5 @@
-query Posts {
-  posts {
+query PostsByCategory($categoryId: Int!) {
+  postsByCategory(categoryId: $categoryId) {
     id
     title
     body

@@ -108,7 +108,13 @@ export type Query = {
   __typename?: 'Query';
   categories: Array<PostCategory>;
   posts: Array<Post>;
+  postsByCategory: Array<Post>;
   me?: Maybe<User>;
+};
+
+
+export type QueryPostsByCategoryArgs = {
+  categoryId: Scalars['Int'];
 };
 
 export type User = {
@@ -262,7 +268,33 @@ export type PostsQuery = (
     ), postCategory: (
       { __typename?: 'PostCategory' }
       & Pick<PostCategory, 'id' | 'name'>
-    ) }
+    ), comments?: Maybe<Array<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+    )>> }
+  )> }
+);
+
+export type PostsByCategoryQueryVariables = Exact<{
+  categoryId: Scalars['Int'];
+}>;
+
+
+export type PostsByCategoryQuery = (
+  { __typename?: 'Query' }
+  & { postsByCategory: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+    & { user: (
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
+    ), postCategory: (
+      { __typename?: 'PostCategory' }
+      & Pick<PostCategory, 'id' | 'name'>
+    ), comments?: Maybe<Array<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+    )>> }
   )> }
 );
 
@@ -554,6 +586,13 @@ export const PostsDocument = gql`
       id
       name
     }
+    comments {
+      id
+      body
+      points
+      createdAt
+      updatedAt
+    }
     createdAt
     updatedAt
   }
@@ -586,3 +625,61 @@ export function usePostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Post
 export type PostsQueryHookResult = ReturnType<typeof usePostsQuery>;
 export type PostsLazyQueryHookResult = ReturnType<typeof usePostsLazyQuery>;
 export type PostsQueryResult = Apollo.QueryResult<PostsQuery, PostsQueryVariables>;
+export const PostsByCategoryDocument = gql`
+    query PostsByCategory($categoryId: Int!) {
+  postsByCategory(categoryId: $categoryId) {
+    id
+    title
+    body
+    points
+    user {
+      id
+      username
+      email
+      createdAt
+      updatedAt
+    }
+    postCategory {
+      id
+      name
+    }
+    comments {
+      id
+      body
+      points
+      createdAt
+      updatedAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __usePostsByCategoryQuery__
+ *
+ * To run a query within a React component, call `usePostsByCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePostsByCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePostsByCategoryQuery({
+ *   variables: {
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function usePostsByCategoryQuery(baseOptions: Apollo.QueryHookOptions<PostsByCategoryQuery, PostsByCategoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PostsByCategoryQuery, PostsByCategoryQueryVariables>(PostsByCategoryDocument, options);
+      }
+export function usePostsByCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PostsByCategoryQuery, PostsByCategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PostsByCategoryQuery, PostsByCategoryQueryVariables>(PostsByCategoryDocument, options);
+        }
+export type PostsByCategoryQueryHookResult = ReturnType<typeof usePostsByCategoryQuery>;
+export type PostsByCategoryLazyQueryHookResult = ReturnType<typeof usePostsByCategoryLazyQuery>;
+export type PostsByCategoryQueryResult = Apollo.QueryResult<PostsByCategoryQuery, PostsByCategoryQueryVariables>;

@@ -46,13 +46,24 @@ export class PostInput {
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  @UseMiddleware()
-  async posts() {
+  async posts(): Promise<Array<Post>> {
     return await Post.find({
       relations: ["user", "postCategory", "comments"],
       order: { createdAt: "DESC" },
     });
   }
+
+  @Query(() => [Post])
+  async postsByCategory(
+    @Arg("categoryId", () => Int) categoryId: number
+  ): Promise<Array<Post>> {
+    return await Post.find({
+      where: { postCategory: { id: categoryId } },
+      relations: ["user", "postCategory", "comments"],
+      order: { createdAt: "DESC" },
+    });
+  }
+
   @Mutation(() => PostResponse)
   @UseMiddleware(isAuth)
   async createPost(

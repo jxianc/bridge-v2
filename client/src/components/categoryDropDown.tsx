@@ -49,6 +49,7 @@ const CategoryDropDown: FC<CategoryDropDownProps> = ({
     const selected = e.target.value;
     setSelectedOption(selected);
 
+    console.log(selected);
     if (navigate) {
       if (!selected) {
         router.push("/");

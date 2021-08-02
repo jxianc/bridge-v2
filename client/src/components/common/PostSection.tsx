@@ -1,29 +1,12 @@
 import { Box, HStack, Button } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
-import { usePostsQuery } from "../../generated/graphql";
+import React from "react";
 import { IoMdCreate } from "react-icons/io";
+import { PostCategory } from "../../generated/graphql";
 import CategoryDropDown from "../categoryDropDown";
-import { PostCard } from "./PostCard";
 
 interface PostSectionProps {}
 
-export const PostSection: React.FC<PostSectionProps> = ({}) => {
-  const { data, error } = usePostsQuery();
-  const [renderPosts, setRenderPosts] = useState<Array<JSX.Element>>([
-    <div key="loading">loading...</div>,
-  ]);
-
-  useEffect(() => {
-    if (!data) {
-      setRenderPosts([<div key="loading">loading...</div>]);
-    } else if (data && data.posts) {
-      const posts = data.posts.map((p) => {
-        return <PostCard key={p.id} post={p} />;
-      });
-      setRenderPosts(posts);
-    }
-  }, [data]);
-
+export const PostSection: React.FC<PostSectionProps> = ({ children }) => {
   return (
     <Box p={2} pt={0} m="0 auto" maxW="100%" maxH="864px" overflow="scroll">
       <Box
@@ -47,7 +30,7 @@ export const PostSection: React.FC<PostSectionProps> = ({}) => {
           </Button>
         </HStack>
       </Box>
-      {renderPosts}
+      {children}
     </Box>
   );
 };

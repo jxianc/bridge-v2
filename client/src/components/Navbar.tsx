@@ -131,7 +131,10 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
       color="white"
     >
       <Box ml={{ base: "0%", md: "0%", lg: "15%" }} fontWeight="bold">
-        <Link style={{ textDecoration: "none" }} to={"/"}>
+        <Link
+          style={{ textDecoration: "none" }}
+          onClick={() => router.push("/")}
+        >
           <HStack _hover={{ color: "#1BD3A7" }}>
             <Box>
               <FaRainbow size="3em" />

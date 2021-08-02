@@ -16,11 +16,13 @@ interface Option {
 interface CategoryDropDownProps {
   preselected?: PostCategory;
   navigate?: boolean;
+  sendOutSelectedCategoryId?: (catId: string) => void;
 }
 
 const CategoryDropDown: FC<CategoryDropDownProps> = ({
   preselected,
   navigate,
+  sendOutSelectedCategoryId,
 }) => {
   const { data } = useCategoriesQuery();
   const [categoryOptions, setCategoryOptions] = useState<Array<Option>>([
@@ -49,7 +51,11 @@ const CategoryDropDown: FC<CategoryDropDownProps> = ({
     const selected = e.target.value;
     setSelectedOption(selected);
 
-    console.log(selected);
+    if (sendOutSelectedCategoryId) {
+      console.log(selected);
+      sendOutSelectedCategoryId(selected);
+    }
+
     if (navigate) {
       if (!selected) {
         router.push("/");

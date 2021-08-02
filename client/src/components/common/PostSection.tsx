@@ -1,8 +1,8 @@
 import { Box, HStack, Button } from "@chakra-ui/react";
 import React from "react";
 import { IoMdCreate } from "react-icons/io";
-import { PostCategory } from "../../generated/graphql";
 import CategoryDropDown from "../categoryDropDown";
+import NextLink from "next/link";
 
 interface PostSectionProps {}
 
@@ -19,15 +19,17 @@ export const PostSection: React.FC<PostSectionProps> = ({ children }) => {
       >
         <HStack spacing={4}>
           <CategoryDropDown navigate={true} />
-          <Button
-            bg="#38EBC0"
-            color="black"
-            _hover={{ bg: "#00B086" }}
-            leftIcon={<IoMdCreate />}
-            shadow="md"
-          >
-            Create
-          </Button>
+          <NextLink href="/create-post">
+            <Button
+              bg="#38EBC0"
+              color="black"
+              _hover={{ bg: "#00B086" }}
+              leftIcon={<IoMdCreate />}
+              shadow="md"
+            >
+              Create
+            </Button>
+          </NextLink>
         </HStack>
       </Box>
       {children}

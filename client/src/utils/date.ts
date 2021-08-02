@@ -1,8 +1,16 @@
-import { format, fromUnixTime } from "date-fns";
+import { format, fromUnixTime, millisecondsToSeconds } from "date-fns";
 
-const STANDARD_FORMAT = "do LLL yyyy, kk:mm";
+const STANDARD_FORMAT = "dd MMM yy, kk:mm";
 
 export const unixToDate = (unix: string) => {
-  const date: Date = fromUnixTime(Number(unix));
+  const unixNum = parseInt(unix);
+
+  // convert from ms to s
+  const inSeconds = millisecondsToSeconds(unixNum);
+
+  // covert unix in s to date
+  const date: Date = fromUnixTime(inSeconds);
+
+  // format
   return format(date, STANDARD_FORMAT);
 };

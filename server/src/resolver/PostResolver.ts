@@ -48,9 +48,11 @@ export class PostResolver {
   @Query(() => [Post])
   @UseMiddleware()
   async posts() {
-    return await Post.find({ relations: ["user", "postCategory", "comments"] });
+    return await Post.find({
+      relations: ["user", "postCategory", "comments"],
+      order: { createdAt: "DESC" },
+    });
   }
-
   @Mutation(() => PostResponse)
   @UseMiddleware(isAuth)
   async createPost(

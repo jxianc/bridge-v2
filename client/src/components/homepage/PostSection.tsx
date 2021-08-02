@@ -10,12 +10,12 @@ interface PostSectionProps {}
 export const PostSection: React.FC<PostSectionProps> = ({}) => {
   const { data, error } = usePostsQuery();
   const [renderPosts, setRenderPosts] = useState<Array<JSX.Element>>([
-    <div>loading...</div>,
+    <div key="loading">loading...</div>,
   ]);
 
   useEffect(() => {
     if (!data) {
-      setRenderPosts([<div>loading...</div>]);
+      setRenderPosts([<div key="loading">loading...</div>]);
     } else if (data && data.posts) {
       const posts = data.posts.map((p) => {
         return <PostCard key={p.id} post={p} />;
@@ -25,8 +25,15 @@ export const PostSection: React.FC<PostSectionProps> = ({}) => {
   }, [data]);
 
   return (
-    <Box p={2} pt={0} m="0 auto" maxW="840px" maxH="864px" overflow="scroll">
-      <Box m={2} p={4} bg="white" borderRadius={4} shadow="lg">
+    <Box p={2} pt={0} m="0 auto" maxW="100%" maxH="864px" overflow="scroll">
+      <Box
+        m={2}
+        p={4}
+        mb={4}
+        bg="white"
+        borderRadius={6}
+        shadow="2px 2px 6px #bababa"
+      >
         <HStack spacing={4}>
           <CategoryDropDown navigate={true} />
           <Button

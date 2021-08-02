@@ -9,7 +9,7 @@ export const Layout: React.FC<LayooutProps> = ({}) => {
   return (
     <Grid
       m="0 auto"
-      maxW="1200px"
+      maxW="70%"
       minH="870px"
       templateColumns="repeat(10, 1fr)"
       templateRows="repeat(1, 1fr)"

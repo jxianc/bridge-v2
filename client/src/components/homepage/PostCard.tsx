@@ -1,7 +1,18 @@
-import { Badge, Box, HStack, Tag } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  Link,
+  Spacer,
+  Tag,
+  VStack,
+} from "@chakra-ui/react";
 import React from "react";
 import { Post } from "../../generated/graphql";
 import { unixToDate } from "../../utils/date";
+import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
+import { categoryColor } from "../../utils/categoryColor";
 
 interface PostCardProps {
   post: Post;
@@ -9,25 +20,75 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
-    <Box m={2} mt={4} mb={4} p={4} shadow="lg" borderRadius={6}>
-      <HStack mb={2} spacing={4}>
-        <Badge fontSize="md" shadow="md">
-          {post.postCategory.name}
-        </Badge>
-        <Tag colorScheme="whatsapp" shadow="md">
-          {post.user.username}
-        </Tag>
-      </HStack>
-      <Box fontSize="xl">
-        <strong>{post.title}</strong>
-      </Box>
-      <Box>{post.body}</Box>
-      <Box mt={8} fontSize="sm" fontStyle="italic" color="gray.600">
-        <HStack spacing={10}>
-          <Box>created at {unixToDate(post.createdAt)}</Box>
-          <Box>updated at {unixToDate(post.updatedAt)}</Box>
+    <Flex m={2} mb={4}>
+      <VStack
+        p={4}
+        bg="white"
+        textAlign="center"
+        fontSize="x-large"
+        w="6%"
+        borderRadius={6}
+        shadow="2px 2px 6px #bababa"
+      >
+        <Box>
+          <Box _hover={{ color: "#00c43e", cursor: "pointer" }}>
+            <BsCaretUpFill />
+          </Box>
+          {post.points}
+          <Box _hover={{ color: "red", cursor: "pointer" }}>
+            <BsCaretDownFill />
+          </Box>
+        </Box>
+        <Spacer />
+
+        <Box>
+          {post.comments ? post.comments.length : 0}
+          <Box _hover={{ color: "gray", cursor: "pointer" }}>
+            <BsReplyAllFill />
+          </Box>
+        </Box>
+      </VStack>
+      <Box
+        p={4}
+        w="100%"
+        shadow="2px 2px 6px #bababa"
+        borderRadius={6}
+        bg="white"
+        position="relative"
+      >
+        <HStack mb={2} spacing={4}>
+          <Badge
+            fontSize="sm"
+            colorScheme={categoryColor[post.postCategory.id]}
+            shadow="md"
+          >
+            {post.postCategory.name}
+          </Badge>
+
+          <Tag colorScheme="whatsapp" shadow="md">
+            {post.user.username}
+          </Tag>
         </HStack>
+        <Box fontSize="xl">
+          <strong>{post.title}</strong>
+        </Box>
+        <Box>{post.body}</Box>
+        <Box
+          position="absolute"
+          bottom={0}
+          mb={4}
+          fontSize="sm"
+          fontStyle="italic"
+          color="gray.600"
+        >
+          <HStack spacing={10}>
+            <Box>created at {unixToDate(post.createdAt)}</Box>
+            {post.createdAt === post.updatedAt ? null : (
+              <Box>updated at {unixToDate(post.updatedAt)}</Box>
+            )}
+          </HStack>
+        </Box>
       </Box>
-    </Box>
+    </Flex>
   );
 };

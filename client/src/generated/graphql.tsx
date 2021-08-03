@@ -114,9 +114,15 @@ export type Query = {
   __typename?: 'Query';
   categories: Array<PostCategory>;
   postsByTopCategory: Array<TopPosts>;
+  singlePost: PostResponse;
   posts: PaginatedPosts;
   postsByCategory: PaginatedPosts;
   me?: Maybe<User>;
+};
+
+
+export type QuerySinglePostArgs = {
+  postId: Scalars['Int'];
 };
 
 
@@ -376,6 +382,35 @@ export type PostsByTopCategoryQuery = (
       & Pick<Post, 'id' | 'title'>
     )>> }
   )> }
+);
+
+export type SinglePostQueryVariables = Exact<{
+  postId: Scalars['Int'];
+}>;
+
+
+export type SinglePostQuery = (
+  { __typename?: 'Query' }
+  & { singlePost: (
+    { __typename?: 'PostResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
+      ), postCategory: (
+        { __typename?: 'PostCategory' }
+        & Pick<PostCategory, 'id' | 'name'>
+      ), comments?: Maybe<Array<(
+        { __typename?: 'Comment' }
+        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt'>
+      )>> }
+    )> }
+  ) }
 );
 
 export const RegularErrorFragmentDoc = gql`
@@ -873,3 +908,66 @@ export function usePostsByTopCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type PostsByTopCategoryQueryHookResult = ReturnType<typeof usePostsByTopCategoryQuery>;
 export type PostsByTopCategoryLazyQueryHookResult = ReturnType<typeof usePostsByTopCategoryLazyQuery>;
 export type PostsByTopCategoryQueryResult = Apollo.QueryResult<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>;
+export const SinglePostDocument = gql`
+    query SinglePost($postId: Int!) {
+  singlePost(postId: $postId) {
+    errors {
+      field
+      message
+    }
+    post {
+      id
+      title
+      body
+      points
+      user {
+        id
+        username
+        email
+        createdAt
+        updatedAt
+      }
+      postCategory {
+        id
+        name
+      }
+      comments {
+        id
+        body
+        points
+        createdAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useSinglePostQuery__
+ *
+ * To run a query within a React component, call `useSinglePostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSinglePostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSinglePostQuery({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useSinglePostQuery(baseOptions: Apollo.QueryHookOptions<SinglePostQuery, SinglePostQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SinglePostQuery, SinglePostQueryVariables>(SinglePostDocument, options);
+      }
+export function useSinglePostLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SinglePostQuery, SinglePostQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SinglePostQuery, SinglePostQueryVariables>(SinglePostDocument, options);
+        }
+export type SinglePostQueryHookResult = ReturnType<typeof useSinglePostQuery>;
+export type SinglePostLazyQueryHookResult = ReturnType<typeof useSinglePostLazyQuery>;
+export type SinglePostQueryResult = Apollo.QueryResult<SinglePostQuery, SinglePostQueryVariables>;

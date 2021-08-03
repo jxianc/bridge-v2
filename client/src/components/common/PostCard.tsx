@@ -1,6 +1,7 @@
 import {
   Badge,
   Box,
+  Button,
   Flex,
   HStack,
   Spacer,
@@ -13,6 +14,9 @@ import { unixToDate } from "../../utils/date";
 import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
 import NextLink from "next/link";
+import { BiDetail } from "react-icons/bi";
+import router from "next/router";
+import { FaRegEdit } from "react-icons/fa";
 
 interface PostCardProps {
   post: Post;
@@ -89,6 +93,30 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
             {post.createdAt === post.updatedAt ? null : (
               <Box>updated at {unixToDate(post.updatedAt)}</Box>
             )}
+          </HStack>
+        </Box>
+        <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
+          <HStack spacing={4}>
+            <NextLink href={`/post/${post.id}`}>
+              <Button
+                size="sm"
+                shadow="md"
+                leftIcon={<FaRegEdit />}
+                colorScheme="gray"
+              >
+                edit
+              </Button>
+            </NextLink>
+            <NextLink href={`/post/${post.id}`}>
+              <Button
+                size="sm"
+                shadow="md"
+                leftIcon={<BiDetail />}
+                colorScheme="gray"
+              >
+                detail
+              </Button>
+            </NextLink>
           </HStack>
         </Box>
       </Box>

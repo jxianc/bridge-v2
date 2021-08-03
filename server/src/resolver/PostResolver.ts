@@ -54,6 +54,28 @@ class PaginatedPosts {
 
 @Resolver()
 export class PostResolver {
+  @Query(() => PostResponse)
+  async singlePost(
+    @Arg("postId", () => Int) postId: number
+  ): Promise<PostResponse> {
+    const post = await Post.findOne({
+      where: { id: postId },
+      relations: ["user", "postCategory", "comments"],
+    });
+    if (!post) {
+      return {
+        errors: [
+          {
+            field: "postId",
+            message: "post not found",
+          },
+        ],
+      };
+    }
+
+    return { post };
+  }
+
   @Query(() => PaginatedPosts)
   async posts(
     @Arg("limit", () => Int) limit: number,

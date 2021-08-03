@@ -1,0 +1,33 @@
+query SinglePost($postId: Int!) {
+  singlePost(postId: $postId) {
+    errors {
+      field
+      message
+    }
+    post {
+      id
+      title
+      body
+      points
+      user {
+        id
+        username
+        email
+        createdAt
+        updatedAt
+      }
+      postCategory {
+        id
+        name
+      }
+      comments {
+        id
+        body
+        points
+        createdAt
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

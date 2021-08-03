@@ -21,8 +21,6 @@ query PostsByCategory($categoryId: Int!, $limit: Int!, $cursor: String) {
         id
         body
         points
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt

@@ -1,0 +1,23 @@
+mutation CreateComment($commentInput: CommentInput!) {
+  createComment(commnetInput: $commentInput) {
+    errors {
+      field
+      message
+    }
+    comment {
+      id
+      body
+      points
+      user {
+        id
+        username
+      }
+      post {
+        id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

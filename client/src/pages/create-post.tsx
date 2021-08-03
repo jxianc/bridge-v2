@@ -2,15 +2,11 @@ import { Box, Button } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { BrowserHead } from "../components/BrowserHead";
 import CategoryDropDown from "../components/categoryDropDown";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
-import {
-  PostsDocument,
-  PostsQuery,
-  useCreatePostMutation,
-  usePostsLazyQuery,
-} from "../generated/graphql";
+import { useCreatePostMutation, usePostsLazyQuery } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useIsAuth } from "../utils/useIsAuth";
 import { withApollo } from "../utils/withApollo";
@@ -27,6 +23,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
 
   return (
     <Wrapper variant="small" title="Create Post">
+      <BrowserHead title="Create Post" />
       <Box mb={4}>
         <CategoryDropDown
           sendOutSelectedCategoryId={(catId) => {
@@ -68,7 +65,9 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
               mt={4}
               type="submit"
               isLoading={isSubmitting}
-              colorScheme="teal"
+              bg="#38EBC0"
+              color="black"
+              _hover={{ bg: "#32d1ab" }}
             >
               Create Post
             </Button>

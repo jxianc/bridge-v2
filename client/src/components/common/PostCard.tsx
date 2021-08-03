@@ -15,7 +15,6 @@ import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
 import NextLink from "next/link";
 import { BiDetail } from "react-icons/bi";
-import router from "next/router";
 import { FaRegEdit } from "react-icons/fa";
 
 interface PostCardProps {
@@ -44,12 +43,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </Box>
         </Box>
         <Spacer />
-
         <Box>
           {post.comments ? post.comments.length : 0}
-          <Box _hover={{ color: "gray", cursor: "pointer" }}>
-            <BsReplyAllFill />
-          </Box>
+          <NextLink href={`/create-comment/${post.id}`}>
+            <Box _hover={{ color: "gray", cursor: "pointer" }}>
+              <BsReplyAllFill />
+            </Box>
+          </NextLink>
         </Box>
       </VStack>
       <Box

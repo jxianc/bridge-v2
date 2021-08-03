@@ -31,9 +31,11 @@ export class Comment extends BaseEntity {
   @OneToMany(() => CommentPoint, (commentPoint) => commentPoint.comment)
   commentPoints: CommentPoint[];
 
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.comments)
   user: User;
 
+  @Field(() => Post)
   @ManyToOne(() => Post, (post) => post.comments)
   post: Post;
 

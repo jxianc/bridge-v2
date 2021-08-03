@@ -1,6 +1,6 @@
-import { Box, Button, Divider, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { PostCategory, usePostsByCategoryQuery } from "../../generated/graphql";
+import { Post, usePostsByCategoryQuery } from "../../generated/graphql";
 import { Layout } from "../common/Layout";
 import { PostCard } from "../common/PostCard";
 import { PostSection } from "../common/PostSection";
@@ -29,7 +29,8 @@ export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
       setRenderPosts([<div key="loading">loading...</div>]);
     } else if (data && data.postsByCategory && data.postsByCategory.posts) {
       const posts = data.postsByCategory.posts.map((p) => {
-        return <PostCard key={p.id} post={p} />;
+        console.log(p);
+        return <PostCard key={p.id} post={p as Post} />;
       });
       setRenderPosts(posts);
     }

@@ -92,6 +92,7 @@ export class PostResolver {
       })
       .leftJoinAndSelect("p.user", "user")
       .leftJoinAndSelect("p.postCategory", "postCategory")
+      .leftJoinAndSelect("p.comments", "comment")
       .orderBy(`p."createdAt"`, "DESC")
       .limit(actualLimitPlusOne)
       .getMany();
@@ -125,6 +126,7 @@ export class PostResolver {
       )
       .leftJoinAndSelect("p.user", "user")
       .leftJoinAndSelect("p.postCategory", "postCategory")
+      .leftJoinAndSelect("p.comments", "comment")
       .orderBy(`p."createdAt"`, "DESC")
       .limit(actualLimitPlusOne)
       .getMany();

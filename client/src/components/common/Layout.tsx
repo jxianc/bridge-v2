@@ -17,7 +17,7 @@ export const Layout: React.FC<LayooutProps> = ({ children }) => {
         <GridItem colSpan={7} rowSpan={55}>
           {children}
         </GridItem>
-        <GridItem colSpan={3} rowSpan={55} bg="beige">
+        <GridItem colSpan={3} rowSpan={55}>
           <CategorySection />
         </GridItem>
       </>

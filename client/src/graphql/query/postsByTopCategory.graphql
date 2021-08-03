@@ -1,0 +1,12 @@
+query PostsByTopCategory {
+  postsByTopCategory {
+    category {
+      id
+      name
+    }
+    posts {
+      id
+      title
+    }
+  }
+}

@@ -3,7 +3,6 @@ import {
   Box,
   Flex,
   HStack,
-  Link,
   Spacer,
   Tag,
   VStack,
@@ -13,6 +12,7 @@ import { Post } from "../../generated/graphql";
 import { unixToDate } from "../../utils/date";
 import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
+import NextLink from "next/link";
 
 interface PostCardProps {
   post: Post;
@@ -57,13 +57,16 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         position="relative"
       >
         <HStack mb={2} spacing={4}>
-          <Badge
-            fontSize="sm"
-            colorScheme={categoryColor[post.postCategory.id]}
-            shadow="md"
-          >
-            {post.postCategory.name}
-          </Badge>
+          <NextLink href={`/category/${post.postCategory.id}`}>
+            <Badge
+              fontSize="sm"
+              colorScheme={categoryColor[post.postCategory.id]}
+              shadow="md"
+              _hover={{ shadow: "1px 1px 8px #888888", cursor: "pointer" }}
+            >
+              {post.postCategory.name}
+            </Badge>
+          </NextLink>
 
           <Tag colorScheme="whatsapp" shadow="md">
             {post.user.username}

@@ -113,6 +113,7 @@ export type PostResponse = {
 export type Query = {
   __typename?: 'Query';
   categories: Array<PostCategory>;
+  postsByTopCategory: Array<TopPosts>;
   posts: PaginatedPosts;
   postsByCategory: PaginatedPosts;
   me?: Maybe<User>;
@@ -129,6 +130,12 @@ export type QueryPostsByCategoryArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   categoryId: Scalars['Int'];
+};
+
+export type TopPosts = {
+  __typename?: 'TopPosts';
+  category: PostCategory;
+  posts?: Maybe<Array<Post>>;
 };
 
 export type User = {
@@ -352,6 +359,23 @@ export type PostsByCategoryQuery = (
       )>> }
     )> }
   ) }
+);
+
+export type PostsByTopCategoryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsByTopCategoryQuery = (
+  { __typename?: 'Query' }
+  & { postsByTopCategory: Array<(
+    { __typename?: 'TopPosts' }
+    & { category: (
+      { __typename?: 'PostCategory' }
+      & Pick<PostCategory, 'id' | 'name'>
+    ), posts?: Maybe<Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title'>
+    )>> }
+  )> }
 );
 
 export const RegularErrorFragmentDoc = gql`
@@ -808,3 +832,44 @@ export function usePostsByCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type PostsByCategoryQueryHookResult = ReturnType<typeof usePostsByCategoryQuery>;
 export type PostsByCategoryLazyQueryHookResult = ReturnType<typeof usePostsByCategoryLazyQuery>;
 export type PostsByCategoryQueryResult = Apollo.QueryResult<PostsByCategoryQuery, PostsByCategoryQueryVariables>;
+export const PostsByTopCategoryDocument = gql`
+    query PostsByTopCategory {
+  postsByTopCategory {
+    category {
+      id
+      name
+    }
+    posts {
+      id
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __usePostsByTopCategoryQuery__
+ *
+ * To run a query within a React component, call `usePostsByTopCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePostsByTopCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePostsByTopCategoryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePostsByTopCategoryQuery(baseOptions?: Apollo.QueryHookOptions<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>(PostsByTopCategoryDocument, options);
+      }
+export function usePostsByTopCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>(PostsByTopCategoryDocument, options);
+        }
+export type PostsByTopCategoryQueryHookResult = ReturnType<typeof usePostsByTopCategoryQuery>;
+export type PostsByTopCategoryLazyQueryHookResult = ReturnType<typeof usePostsByTopCategoryLazyQuery>;
+export type PostsByTopCategoryQueryResult = Apollo.QueryResult<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>;

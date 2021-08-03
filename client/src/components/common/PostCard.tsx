@@ -20,7 +20,7 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
   return (
-    <Flex m={2} mb={4}>
+    <Flex m={2} mb={8}>
       <VStack
         p={4}
         bg="white"

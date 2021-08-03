@@ -1,4 +1,4 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { PostCategory, usePostsByCategoryQuery } from "../../generated/graphql";
 import { Layout } from "../common/Layout";
@@ -60,7 +60,13 @@ export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
         </Flex>
       );
     } else {
-      setLoadMoreButton(null);
+      setLoadMoreButton(
+        <Flex>
+          <Box m="auto" fontStyle="italic" color="gray.500">
+            end of posts
+          </Box>
+        </Flex>
+      );
     }
   }, [data]);
 

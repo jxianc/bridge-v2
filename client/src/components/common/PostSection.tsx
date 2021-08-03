@@ -12,7 +12,7 @@ export const PostSection: React.FC<PostSectionProps> = ({ children }) => {
       <Box
         m={2}
         p={4}
-        mb={4}
+        mb={6}
         bg="white"
         borderRadius={6}
         shadow="2px 2px 6px #bababa"

@@ -53,7 +53,13 @@ export const Posts: React.FC<PostsProps> = ({}) => {
         </Flex>
       );
     } else {
-      setLoadMoreButton(null);
+      setLoadMoreButton(
+        <Flex>
+          <Box m="auto" fontStyle="italic" color="gray.500">
+            end of posts
+          </Box>
+        </Flex>
+      );
     }
   }, [data]);
 

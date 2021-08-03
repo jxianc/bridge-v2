@@ -23,7 +23,7 @@ const createClient = () =>
               },
             },
             postsByCategory: {
-              keyArgs: [],
+              keyArgs: ["categoryId"],
               merge(
                 existing: PaginatedPosts | undefined,
                 incoming: PaginatedPosts

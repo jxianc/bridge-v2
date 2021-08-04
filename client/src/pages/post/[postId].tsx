@@ -108,9 +108,11 @@ const Post: NextPage<{ postId: string }> = () => {
 
             <Box>
               {post.comments ? post.comments.length : 0}
-              <Box _hover={{ color: "gray", cursor: "pointer" }}>
-                <BsReplyAllFill />
-              </Box>
+              <NextLink href={`/create-comment/${post.id}`}>
+                <Box _hover={{ color: "gray", cursor: "pointer" }}>
+                  <BsReplyAllFill />
+                </Box>
+              </NextLink>
             </Box>
           </VStack>
           <Box
@@ -213,6 +215,7 @@ const Post: NextPage<{ postId: string }> = () => {
             isLoading={loading}
             shadow="md"
             m="auto"
+            mb={4}
           >
             Load More
           </Button>
@@ -234,8 +237,10 @@ const Post: NextPage<{ postId: string }> = () => {
       <BrowserHead title="Post" />
       {renderError ? renderError : null}
       {renderPost ? renderPost : null}
-      {renderComment ? renderComment : null}
-      <Box>{loadMoreButton}</Box>
+      <Box m="0 auto" maxH="500px" overflow="scroll">
+        {renderComment ? renderComment : null}
+        <Box>{loadMoreButton}</Box>
+      </Box>
     </Wrapper>
   );
 };

@@ -32,6 +32,9 @@ const CreateComment: NextPage<{ postId: string }> = () => {
                 postId: parseInt(postId),
               },
             },
+            update: (cache) => {
+              cache.evict({ fieldName: "comments:{}" });
+            },
           });
           if (response.data?.createComment.errors) {
             const errorMap = toErrorMap(response.data.createComment.errors);

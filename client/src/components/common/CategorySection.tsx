@@ -36,17 +36,23 @@ export const CategorySection: React.FC<CategorySectionProps> = ({}) => {
             </NextLink>
             {obj.posts.map((p) => {
               return (
-                <Box
-                  key={p.id}
-                  bg="#FFABBF"
-                  borderRadius={6}
-                  p={1}
-                  pl={2}
-                  mt={2}
-                  _hover={{ bg: "#ff9cb3", color: "white", cursor: "pointer" }}
-                >
-                  {p.title}
-                </Box>
+                <NextLink href={`/post/${p.id}`}>
+                  <Box
+                    key={p.id}
+                    bg="#FFABBF"
+                    borderRadius={6}
+                    p={1}
+                    pl={2}
+                    mt={2}
+                    _hover={{
+                      bg: "#ff9cb3",
+                      color: "white",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {p.title}
+                  </Box>
+                </NextLink>
               );
             })}
           </Box>

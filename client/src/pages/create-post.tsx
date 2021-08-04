@@ -36,6 +36,9 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
         onSubmit={async (values, { setErrors }) => {
           const response = await createPost({
             variables: { postInput: { ...values, postCategoryId } },
+            update: (cache) => {
+              cache.evict({ fieldName: "posts:{}" });
+            },
           });
           if (response.data?.createPost.errors) {
             const errorMap = toErrorMap(response.data.createPost.errors);

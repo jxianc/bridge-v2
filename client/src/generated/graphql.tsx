@@ -407,21 +407,7 @@ export type PostsByCategoryQuery = (
         & Pick<PostCategory, 'id' | 'name'>
       ), comments?: Maybe<Array<(
         { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-        & { user: (
-          { __typename?: 'User' }
-          & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
-        ), post: (
-          { __typename?: 'Post' }
-          & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-          & { user: (
-            { __typename?: 'User' }
-            & Pick<User, 'id' | 'username'>
-          ), postCategory: (
-            { __typename?: 'PostCategory' }
-            & Pick<PostCategory, 'id' | 'name'>
-          ) }
-        ) }
+        & Pick<Comment, 'id' | 'body' | 'points'>
       )>> }
     )> }
   ) }
@@ -467,7 +453,11 @@ export type SinglePostQuery = (
         & Pick<PostCategory, 'id' | 'name'>
       ), comments?: Maybe<Array<(
         { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt'>
+        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+        & { user: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'username'>
+        ) }
       )>> }
     )> }
   ) }
@@ -939,31 +929,6 @@ export const PostsByCategoryDocument = gql`
         id
         body
         points
-        user {
-          id
-          username
-          email
-          createdAt
-          updatedAt
-        }
-        post {
-          id
-          title
-          body
-          points
-          user {
-            id
-            username
-          }
-          postCategory {
-            id
-            name
-          }
-          createdAt
-          updatedAt
-        }
-        createdAt
-        updatedAt
       }
       createdAt
       updatedAt
@@ -1068,8 +1033,13 @@ export const SinglePostDocument = gql`
       comments {
         id
         body
+        user {
+          id
+          username
+        }
         points
         createdAt
+        updatedAt
       }
       createdAt
       updatedAt

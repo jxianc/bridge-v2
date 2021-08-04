@@ -23,8 +23,13 @@ query SinglePost($postId: Int!) {
       comments {
         id
         body
+        user {
+          id
+          username
+        }
         points
         createdAt
+        updatedAt
       }
       createdAt
       updatedAt

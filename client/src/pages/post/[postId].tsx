@@ -2,7 +2,7 @@ import React from "react";
 import { NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useSinglePostQuery } from "../../generated/graphql";
+import { Comment, useSinglePostQuery } from "../../generated/graphql";
 import { useEffect } from "react";
 import { withApollo } from "../../utils/withApollo";
 import { Wrapper } from "../../components/Wrapper";
@@ -14,6 +14,7 @@ import {
   Button,
   Flex,
   HStack,
+  SimpleGrid,
   Spacer,
   Tag,
   VStack,
@@ -22,9 +23,12 @@ import { BsCaretUpFill, BsCaretDownFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
 import { unixToDate } from "../../utils/date";
 import { FaRegEdit } from "react-icons/fa";
+import { CommentCard } from "../../components/common/CommentCard";
 
 const Post: NextPage<{ postId: string }> = () => {
+  const [renderError, setRenderError] = useState<JSX.Element>();
   const [renderPost, setRenderPost] = useState<JSX.Element>();
+  const [renderComment, setRenderComment] = useState<Array<JSX.Element>>();
   const router = useRouter();
   const { data } = useSinglePostQuery({
     variables: {
@@ -34,10 +38,12 @@ const Post: NextPage<{ postId: string }> = () => {
     },
   });
 
+  console.log(data);
+
   useEffect(() => {
     if (data && data.singlePost && data.singlePost.errors) {
       if (data.singlePost.errors[0].field === "postId") {
-        setRenderPost(
+        setRenderError(
           <VStack>
             <strong>{data.singlePost.errors[0].message}</strong>
             <Box>
@@ -98,63 +104,76 @@ const Post: NextPage<{ postId: string }> = () => {
             bg="white"
             position="relative"
           >
-            <HStack mb={2} spacing={4}>
-              <NextLink href={`/category/${post.postCategory.id}`}>
-                <Badge
-                  fontSize="sm"
-                  colorScheme={categoryColor[post.postCategory.id]}
-                  shadow="md"
-                  _hover={{ shadow: "1px 1px 8px #888888", cursor: "pointer" }}
-                >
-                  {post.postCategory.name}
-                </Badge>
-              </NextLink>
-
-              <Tag colorScheme="whatsapp" shadow="md">
-                {post.user.username}
-              </Tag>
-            </HStack>
-            <Box fontSize="xl">
-              <strong>{post.title}</strong>
-            </Box>
-            <Box>{post.body}</Box>
-            <Box
-              position="absolute"
-              bottom={0}
-              mb={4}
-              fontSize="sm"
-              fontStyle="italic"
-              color="gray.600"
-            >
-              <HStack spacing={10}>
-                <Box>created at {unixToDate(post.createdAt)}</Box>
-                {post.createdAt === post.updatedAt ? null : (
-                  <Box>updated at {unixToDate(post.updatedAt)}</Box>
-                )}
-              </HStack>
-            </Box>
-            <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
-              <NextLink href={`/post/${post.id}`}>
-                <Button
-                  size="sm"
-                  shadow="md"
-                  leftIcon={<FaRegEdit />}
-                  colorScheme="gray"
-                >
-                  edit
-                </Button>
-              </NextLink>
-            </Box>
+            <SimpleGrid columns={1} spacing={10}>
+              <Box>
+                <HStack mb={2} spacing={4}>
+                  <NextLink href={`/category/${post.postCategory.id}`}>
+                    <Badge
+                      fontSize="sm"
+                      colorScheme={categoryColor[post.postCategory.id]}
+                      shadow="md"
+                      _hover={{
+                        shadow: "1px 1px 8px #888888",
+                        cursor: "pointer",
+                      }}
+                    >
+                      {post.postCategory.name}
+                    </Badge>
+                  </NextLink>
+                  <Tag colorScheme="whatsapp" shadow="md">
+                    {post.user.username}
+                  </Tag>
+                </HStack>
+                <Box fontSize="xl">
+                  <strong>{post.title}</strong>
+                </Box>
+                <Box>{post.body}</Box>
+              </Box>
+              <Box>
+                <Box fontSize="sm" fontStyle="italic" color="gray.600" mt={3}>
+                  <HStack spacing={10}>
+                    <Box>created at {unixToDate(post.createdAt)}</Box>
+                    {post.createdAt === post.updatedAt ? null : (
+                      <Box>updated at {unixToDate(post.updatedAt)}</Box>
+                    )}
+                  </HStack>
+                </Box>
+                <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
+                  <NextLink href={`/post/${post.id}`}>
+                    <Button
+                      size="sm"
+                      shadow="md"
+                      leftIcon={<FaRegEdit />}
+                      colorScheme="gray"
+                    >
+                      edit
+                    </Button>
+                  </NextLink>
+                </Box>
+              </Box>
+            </SimpleGrid>
           </Box>
         </Flex>
       );
     }
   }, [data]);
 
+  useEffect(() => {
+    if (data && data.singlePost && data.singlePost.post.comments) {
+      const commentList = data.singlePost.post.comments;
+      const comments = commentList.map((c) => {
+        return <CommentCard key={c.id} comment={c as Comment} />;
+      });
+      setRenderComment(comments);
+    }
+  }, [data]);
+
   return (
     <Wrapper variant="regular" title="Post">
       <BrowserHead title="Post" />
-      {renderPost}
+      {renderError ? renderError : null}
+      {renderPost ? renderPost : null}
+      {renderComment ? renderComment : null}
     </Wrapper>
   );
 };

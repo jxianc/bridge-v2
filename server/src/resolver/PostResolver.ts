@@ -60,7 +60,7 @@ export class PostResolver {
   ): Promise<PostResponse> {
     const post = await Post.findOne({
       where: { id: postId },
-      relations: ["user", "postCategory", "comments"],
+      relations: ["user", "postCategory", "comments", "comments.user"],
     });
     if (!post) {
       return {
@@ -86,15 +86,15 @@ export class PostResolver {
 
     const posts = await getConnection()
       .getRepository(Post)
-      .createQueryBuilder("p")
-      .where(cursor ? `p."createdAt" < :cursor` : "", {
+      .createQueryBuilder("post")
+      .where(cursor ? `post."createdAt" < :cursor` : "", {
         cursor: new Date(parseInt(cursor as string)),
       })
-      .leftJoinAndSelect("p.user", "user")
-      .leftJoinAndSelect("p.postCategory", "postCategory")
-      .leftJoinAndSelect("p.comments", "comment")
-      .orderBy(`p."createdAt"`, "DESC")
-      .limit(actualLimitPlusOne)
+      .leftJoinAndSelect("post.user", "user")
+      .leftJoinAndSelect("post.postCategory", "postCategory")
+      .leftJoinAndSelect("post.comments", "comment")
+      .orderBy("post.createdAt", "DESC")
+      .take(actualLimitPlusOne)
       .getMany();
 
     return {
@@ -114,21 +114,21 @@ export class PostResolver {
 
     const posts = await getConnection()
       .getRepository(Post)
-      .createQueryBuilder("p")
+      .createQueryBuilder("post")
       .where(
         cursor
-          ? `p."createdAt" < :cursor and p."postCategoryId" = :categoryId `
-          : `p."postCategoryId" = :categoryId`,
+          ? `post."createdAt" < :cursor and post."postCategoryId" = :categoryId `
+          : `post."postCategoryId" = :categoryId`,
         {
           cursor: new Date(parseInt(cursor as string)),
           categoryId,
         }
       )
-      .leftJoinAndSelect("p.user", "user")
-      .leftJoinAndSelect("p.postCategory", "postCategory")
-      .leftJoinAndSelect("p.comments", "comment")
-      .orderBy(`p."createdAt"`, "DESC")
-      .limit(actualLimitPlusOne)
+      .leftJoinAndSelect("post.user", "user")
+      .leftJoinAndSelect("post.postCategory", "postCategory")
+      .leftJoinAndSelect("post.comments", "comment")
+      .orderBy("post.createdAt", "DESC")
+      .take(actualLimitPlusOne)
       .getMany();
 
     return {

@@ -1,6 +1,6 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { usePostsQuery } from "../../generated/graphql";
+import { Post, usePostsQuery } from "../../generated/graphql";
 import { Layout } from "../common/Layout";
 import { PostCard } from "../common/PostCard";
 import { PostSection } from "../common/PostSection";
@@ -24,7 +24,7 @@ export const Posts: React.FC<PostsProps> = ({}) => {
       setRenderPosts([<div key="loading">loading...</div>]);
     } else if (data && data.posts && data.posts.posts) {
       const posts = data.posts.posts.map((p) => {
-        return <PostCard key={p.id} post={p} />;
+        return <PostCard key={p.id} post={p as Post} />;
       });
       setRenderPosts(posts);
     }

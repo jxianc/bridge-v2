@@ -4,6 +4,7 @@ import {
   Button,
   Flex,
   HStack,
+  SimpleGrid,
   Spacer,
   Tag,
   VStack,
@@ -60,65 +61,64 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
         bg="white"
         position="relative"
       >
-        <HStack mb={2} spacing={4}>
-          <NextLink href={`/category/${post.postCategory.id}`}>
-            <Badge
-              fontSize="sm"
-              colorScheme={categoryColor[post.postCategory.id]}
-              shadow="md"
-              _hover={{ shadow: "1px 1px 8px #888888", cursor: "pointer" }}
-            >
-              {post.postCategory.name}
-            </Badge>
-          </NextLink>
+        <SimpleGrid columns={1} spacing={10}>
+          <Box>
+            <HStack mb={2} spacing={4}>
+              <NextLink href={`/category/${post.postCategory.id}`}>
+                <Badge
+                  fontSize="sm"
+                  colorScheme={categoryColor[post.postCategory.id]}
+                  shadow="md"
+                  _hover={{ shadow: "1px 1px 8px #888888", cursor: "pointer" }}
+                >
+                  {post.postCategory.name}
+                </Badge>
+              </NextLink>
 
-          <Tag colorScheme="whatsapp" shadow="md">
-            {post.user.username}
-          </Tag>
-        </HStack>
-        <Box fontSize="xl">
-          <strong>{post.title}</strong>
-        </Box>
-        <Box>{post.body}</Box>
-        <Box
-          position="absolute"
-          bottom={0}
-          mb={4}
-          fontSize="sm"
-          fontStyle="italic"
-          color="gray.600"
-        >
-          <HStack spacing={10}>
-            <Box>created at {unixToDate(post.createdAt)}</Box>
-            {post.createdAt === post.updatedAt ? null : (
-              <Box>updated at {unixToDate(post.updatedAt)}</Box>
-            )}
-          </HStack>
-        </Box>
-        <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
-          <HStack spacing={4}>
-            <NextLink href={`/post/${post.id}`}>
-              <Button
-                size="sm"
-                shadow="md"
-                leftIcon={<FaRegEdit />}
-                colorScheme="gray"
-              >
-                edit
-              </Button>
-            </NextLink>
-            <NextLink href={`/post/${post.id}`}>
-              <Button
-                size="sm"
-                shadow="md"
-                leftIcon={<BiDetail />}
-                colorScheme="gray"
-              >
-                detail
-              </Button>
-            </NextLink>
-          </HStack>
-        </Box>
+              <Tag colorScheme="whatsapp" shadow="md">
+                {post.user.username}
+              </Tag>
+            </HStack>
+            <Box fontSize="xl">
+              <strong>{post.title}</strong>
+            </Box>
+            <Box>{post.body}</Box>
+          </Box>
+          <Box>
+            <Box fontSize="sm" fontStyle="italic" color="gray.600" mt={3}>
+              <HStack spacing={10}>
+                <Box>created at {unixToDate(post.createdAt)}</Box>
+                {post.createdAt === post.updatedAt ? null : (
+                  <Box>updated at {unixToDate(post.updatedAt)}</Box>
+                )}
+              </HStack>
+            </Box>
+            <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
+              <HStack spacing={4}>
+                <NextLink href={`/post/${post.id}`}>
+                  <Button
+                    size="sm"
+                    shadow="md"
+                    leftIcon={<FaRegEdit />}
+                    colorScheme="gray"
+                  >
+                    edit
+                  </Button>
+                </NextLink>
+                <NextLink href={`/post/${post.id}`}>
+                  <Button
+                    size="sm"
+                    shadow="md"
+                    leftIcon={<BiDetail />}
+                    colorScheme="gray"
+                  >
+                    detail
+                  </Button>
+                </NextLink>
+              </HStack>
+            </Box>
+          </Box>
+        </SimpleGrid>
       </Box>
     </Flex>
   );

@@ -6,8 +6,10 @@ import session from "express-session";
 import Redis from "ioredis";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
+import { CommentPointResolver } from "./resolver/CommentPointResolver";
 import { CommentResolver } from "./resolver/CommentResolver";
 import { PostCategoryResolver } from "./resolver/PostCategoryResolver";
+import { PostPointResolver } from "./resolver/PostPointResolver";
 import { PostResolver } from "./resolver/PostResolver";
 import { UserResolver } from "./resolver/UserResolver";
 
@@ -47,8 +49,10 @@ const main = async () => {
     resolvers: [
       UserResolver,
       PostResolver,
-      PostCategoryResolver,
+      PostPointResolver,
       CommentResolver,
+      CommentPointResolver,
+      PostCategoryResolver,
     ],
   });
   const apolloServer = new ApolloServer({

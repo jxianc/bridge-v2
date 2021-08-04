@@ -92,6 +92,12 @@ export type MutationChangePasswordArgs = {
   token: Scalars['String'];
 };
 
+export type PaginatedComments = {
+  __typename?: 'PaginatedComments';
+  comments: Array<Comment>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type PaginatedPosts = {
   __typename?: 'PaginatedPosts';
   posts: Array<Post>;
@@ -132,12 +138,20 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  commentsByPost: PaginatedComments;
   categories: Array<PostCategory>;
   postsByTopCategory: Array<TopPosts>;
   singlePost: PostResponse;
   posts: PaginatedPosts;
   postsByCategory: PaginatedPosts;
   me?: Maybe<User>;
+};
+
+
+export type QueryCommentsByPostArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  postId: Scalars['Int'];
 };
 
 
@@ -342,6 +356,29 @@ export type CategoriesQuery = (
     { __typename?: 'PostCategory' }
     & Pick<PostCategory, 'id' | 'name'>
   )> }
+);
+
+export type CommentsByPostQueryVariables = Exact<{
+  postId: Scalars['Int'];
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CommentsByPostQuery = (
+  { __typename?: 'Query' }
+  & { commentsByPost: (
+    { __typename?: 'PaginatedComments' }
+    & Pick<PaginatedComments, 'hasMore'>
+    & { comments: Array<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ) }
+    )> }
+  ) }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -807,6 +844,54 @@ export function useCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type CategoriesQueryHookResult = ReturnType<typeof useCategoriesQuery>;
 export type CategoriesLazyQueryHookResult = ReturnType<typeof useCategoriesLazyQuery>;
 export type CategoriesQueryResult = Apollo.QueryResult<CategoriesQuery, CategoriesQueryVariables>;
+export const CommentsByPostDocument = gql`
+    query CommentsByPost($postId: Int!, $limit: Int!, $cursor: String) {
+  commentsByPost(postId: $postId, limit: $limit, cursor: $cursor) {
+    hasMore
+    comments {
+      id
+      body
+      points
+      user {
+        id
+        username
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useCommentsByPostQuery__
+ *
+ * To run a query within a React component, call `useCommentsByPostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCommentsByPostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommentsByPostQuery({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useCommentsByPostQuery(baseOptions: Apollo.QueryHookOptions<CommentsByPostQuery, CommentsByPostQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CommentsByPostQuery, CommentsByPostQueryVariables>(CommentsByPostDocument, options);
+      }
+export function useCommentsByPostLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CommentsByPostQuery, CommentsByPostQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CommentsByPostQuery, CommentsByPostQueryVariables>(CommentsByPostDocument, options);
+        }
+export type CommentsByPostQueryHookResult = ReturnType<typeof useCommentsByPostQuery>;
+export type CommentsByPostLazyQueryHookResult = ReturnType<typeof useCommentsByPostLazyQuery>;
+export type CommentsByPostQueryResult = Apollo.QueryResult<CommentsByPostQuery, CommentsByPostQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

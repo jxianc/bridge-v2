@@ -29,7 +29,6 @@ export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
       setRenderPosts([<div key="loading">loading...</div>]);
     } else if (data && data.postsByCategory && data.postsByCategory.posts) {
       const posts = data.postsByCategory.posts.map((p) => {
-        console.log(p);
         return <PostCard key={p.id} post={p as Post} />;
       });
       setRenderPosts(posts);

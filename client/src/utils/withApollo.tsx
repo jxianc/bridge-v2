@@ -1,6 +1,6 @@
 import { withApollo as createWithApollo } from "next-apollo";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { PaginatedPosts } from "../generated/graphql";
+import { PaginatedComments, PaginatedPosts } from "../generated/graphql";
 
 const createClient = () =>
   new ApolloClient({
@@ -31,6 +31,21 @@ const createClient = () =>
                 return {
                   ...incoming,
                   posts: [...(existing?.posts || []), ...incoming.posts],
+                };
+              },
+            },
+            commentsByPost: {
+              keyArgs: ["postId"],
+              merge(
+                existing: PaginatedComments | undefined,
+                incoming: PaginatedComments
+              ): PaginatedComments {
+                return {
+                  ...incoming,
+                  comments: [
+                    ...(existing?.comments || []),
+                    ...incoming.comments,
+                  ],
                 };
               },
             },

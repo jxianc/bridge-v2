@@ -2,7 +2,11 @@ import React from "react";
 import { NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { Comment, useSinglePostQuery } from "../../generated/graphql";
+import {
+  Comment,
+  useCommentsByPostQuery,
+  useSinglePostQuery,
+} from "../../generated/graphql";
 import { useEffect } from "react";
 import { withApollo } from "../../utils/withApollo";
 import { Wrapper } from "../../components/Wrapper";
@@ -29,6 +33,7 @@ const Post: NextPage<{ postId: string }> = () => {
   const [renderError, setRenderError] = useState<JSX.Element>();
   const [renderPost, setRenderPost] = useState<JSX.Element>();
   const [renderComment, setRenderComment] = useState<Array<JSX.Element>>();
+  const [loadMoreButton, setLoadMoreButton] = useState<JSX.Element | null>();
   const router = useRouter();
   const { data } = useSinglePostQuery({
     variables: {
@@ -37,8 +42,20 @@ const Post: NextPage<{ postId: string }> = () => {
       ),
     },
   });
-
-  console.log(data);
+  const {
+    data: commentData,
+    loading,
+    fetchMore,
+    variables,
+  } = useCommentsByPostQuery({
+    variables: {
+      postId: parseInt(
+        typeof router.query.postId === "string" ? router.query.postId : ""
+      ),
+      limit: 1,
+      cursor: null,
+    },
+  });
 
   useEffect(() => {
     if (data && data.singlePost && data.singlePost.errors) {
@@ -159,14 +176,58 @@ const Post: NextPage<{ postId: string }> = () => {
   }, [data]);
 
   useEffect(() => {
-    if (data && data.singlePost && data.singlePost.post.comments) {
-      const commentList = data.singlePost.post.comments;
-      const comments = commentList.map((c) => {
+    if (!commentData && loading) {
+      setRenderComment([<div key="loading">loading...</div>]);
+    } else if (
+      commentData &&
+      commentData.commentsByPost &&
+      commentData.commentsByPost.comments
+    ) {
+      const comments = commentData.commentsByPost.comments.map((c) => {
         return <CommentCard key={c.id} comment={c as Comment} />;
       });
       setRenderComment(comments);
     }
-  }, [data]);
+  }, [commentData]);
+
+  useEffect(() => {
+    if (
+      commentData &&
+      commentData.commentsByPost &&
+      commentData.commentsByPost.hasMore
+    ) {
+      setLoadMoreButton(
+        <Flex>
+          <Button
+            onClick={() => {
+              fetchMore({
+                variables: {
+                  limits: variables.limit,
+                  cursor:
+                    commentData.commentsByPost.comments[
+                      commentData.commentsByPost.comments.length - 1
+                    ].createdAt,
+                },
+              });
+            }}
+            isLoading={loading}
+            shadow="md"
+            m="auto"
+          >
+            Load More
+          </Button>
+        </Flex>
+      );
+    } else {
+      setLoadMoreButton(
+        <Flex>
+          <Box m="auto" fontStyle="italic" color="gray.500">
+            end of comments
+          </Box>
+        </Flex>
+      );
+    }
+  }, [commentData]);
 
   return (
     <Wrapper variant="regular" title="Post">
@@ -174,6 +235,7 @@ const Post: NextPage<{ postId: string }> = () => {
       {renderError ? renderError : null}
       {renderPost ? renderPost : null}
       {renderComment ? renderComment : null}
+      <Box>{loadMoreButton}</Box>
     </Wrapper>
   );
 };

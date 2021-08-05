@@ -28,12 +28,23 @@ export class Comment extends BaseEntity {
   @Column({ type: "int", default: 0 })
   points!: number;
 
+  @Field(() => Int, { nullable: true })
+  voteStatus: number | null; // 1 or -1 or null
+
   @OneToMany(() => CommentPoint, (commentPoint) => commentPoint.comment)
   commentPoints: CommentPoint[];
+
+  @Field()
+  @Column()
+  userId: number;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.comments)
   user: User;
+
+  @Field()
+  @Column()
+  postId: number;
 
   @Field(() => Post)
   @ManyToOne(() => Post, (post) => post.comments)

@@ -23,7 +23,7 @@ export class CommentPointResolver {
       return {
         errors: [
           {
-            field: "post",
+            field: "comment",
             message: "comment not found",
           },
         ],
@@ -48,13 +48,14 @@ export class CommentPointResolver {
         // user voted before
         if (isUpvote) {
           // is upvote
-          if (existingPoint.isDecrement) {
+          if (existingPoint.value === -1) {
             // is downvote previously
-            await CommentPoint.remove(existingPoint);
-            comment.points = comment.points + 1;
+            await CommentPoint.update({ id: existingPoint.id }, { value: 1 });
+            comment.points = comment.points + 2;
             await comment.save();
             result = {
               success: true,
+              point: comment.points,
             };
           } else {
             // is upvote previously
@@ -65,13 +66,14 @@ export class CommentPointResolver {
           }
         } else {
           // is downvote
-          if (!existingPoint.isDecrement) {
+          if (existingPoint.value === 1) {
             // is upvote previously
-            await CommentPoint.remove(existingPoint);
-            comment.points = comment.points - 1;
+            await CommentPoint.update({ id: existingPoint.id }, { value: -1 });
+            comment.points = comment.points - 2;
             await comment.save();
             result = {
               success: true,
+              point: comment.points,
             };
           } else {
             result = {
@@ -85,7 +87,7 @@ export class CommentPointResolver {
       } else {
         // user never vote before
         await CommentPoint.create({
-          isDecrement: !isUpvote,
+          value: isUpvote ? 1 : -1,
           user,
           comment,
         }).save();
@@ -99,6 +101,7 @@ export class CommentPointResolver {
         await comment.save();
         result = {
           success: true,
+          point: comment.points,
         };
       }
     });

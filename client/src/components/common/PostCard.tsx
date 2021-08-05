@@ -82,7 +82,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
       >
         <Box>
           <Box
-            // _hover={{ color: "#00c43e", cursor: "pointer" }}
+            _hover={{ color: "#00c73f", cursor: "pointer" }}
+            color={post.voteStatus === 1 ? "#00c73f" : undefined}
             onClick={async () => {
               if (post.voteStatus === 1) {
                 return;
@@ -92,13 +93,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
                 update: (cache) => updateAfterVote(1, post.id, cache),
               });
             }}
-            color={post.voteStatus === 1 ? "green" : undefined}
           >
             <BsCaretUpFill />
           </Box>
           {post.points}
           <Box
-            // _hover={{ color: "red", cursor: "pointer" }}
+            _hover={{ color: "red", cursor: "pointer" }}
+            color={post.voteStatus === -1 ? "red" : undefined}
             onClick={async () => {
               if (post.voteStatus === -1) {
                 return;
@@ -108,7 +109,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
                 update: (cache) => updateAfterVote(-1, post.id, cache),
               });
             }}
-            color={post.voteStatus === -1 ? "red" : undefined}
           >
             <BsCaretDownFill />
           </Box>

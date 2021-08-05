@@ -3,12 +3,14 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   InputType,
   Int,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { isAuth } from "../middleware/isAuth";
@@ -17,6 +19,7 @@ import { User } from "../entity/User";
 import { Comment } from "../entity/Comment";
 import { Post } from "../entity/Post";
 import { getConnection } from "typeorm";
+import { CommentPoint } from "../entity/CommentPoint";
 
 @ObjectType()
 class CommentResponse {
@@ -48,8 +51,26 @@ class PaginatedComments {
   hasMore: boolean;
 }
 
-@Resolver()
+@Resolver(Comment)
 export class CommentResolver {
+  @FieldResolver(() => User)
+  user(@Root() comment: Comment, @Ctx() { userLoader }: MyContext) {
+    return userLoader.load(comment.userId);
+  }
+
+  @FieldResolver(() => Int, { nullable: true })
+  async voteStatus(@Root() comment: Comment, @Ctx() { req }: MyContext) {
+    if (!req.session!.userId) {
+      return null;
+    }
+
+    const commentPoint = await CommentPoint.findOne({
+      where: { commentId: comment.id, userId: req.session!.userId },
+    });
+
+    return commentPoint ? commentPoint.value : null;
+  }
+
   @Query(() => PaginatedComments)
   async commentsByPost(
     @Arg("postId", () => Int) postId: number,
@@ -71,7 +92,7 @@ export class CommentResolver {
           postId,
         }
       )
-      .leftJoinAndSelect("comment.user", "user")
+      // .leftJoinAndSelect("comment.user", "user")
       .orderBy("comment.createdAt", "DESC")
       .take(actualLimitPlusOne)
       .getMany();

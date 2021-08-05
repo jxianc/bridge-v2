@@ -2,4 +2,5 @@ fragment RegularComment on Comment {
   id
   body
   points
+  voteStatus
 }

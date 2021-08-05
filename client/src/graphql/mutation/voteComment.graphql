@@ -1,0 +1,9 @@
+mutation VoteComment($commentId: Int!, $isUpvote: Boolean!) {
+  voteComment(commentId: $commentId, isUpvote: $isUpvote) {
+    errors {
+      ...RegularError
+    }
+    success
+    point
+  }
+}

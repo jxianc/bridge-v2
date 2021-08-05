@@ -19,7 +19,10 @@ export type Comment = {
   id: Scalars['Int'];
   body: Scalars['String'];
   points: Scalars['Float'];
+  voteStatus?: Maybe<Scalars['Int']>;
+  userId: Scalars['Float'];
   user: User;
+  postId: Scalars['Float'];
   post: Post;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -227,7 +230,7 @@ export type UserResponse = {
 
 export type RegularCommentFragment = (
   { __typename?: 'Comment' }
-  & Pick<Comment, 'id' | 'body' | 'points'>
+  & Pick<Comment, 'id' | 'body' | 'points' | 'voteStatus'>
 );
 
 export type RegularErrorFragment = (
@@ -378,6 +381,24 @@ export type RegisterMutation = (
       & Pick<User, 'createdAt' | 'updatedAt'>
       & RegularUserFragment
     )> }
+  ) }
+);
+
+export type VoteCommentMutationVariables = Exact<{
+  commentId: Scalars['Int'];
+  isUpvote: Scalars['Boolean'];
+}>;
+
+
+export type VoteCommentMutation = (
+  { __typename?: 'Mutation' }
+  & { voteComment: (
+    { __typename?: 'PointResponse' }
+    & Pick<PointResponse, 'success' | 'point'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & RegularErrorFragment
+    )>> }
   ) }
 );
 
@@ -546,6 +567,7 @@ export const RegularCommentFragmentDoc = gql`
   id
   body
   points
+  voteStatus
 }
     `;
 export const RegularPostFragmentDoc = gql`
@@ -844,6 +866,44 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const VoteCommentDocument = gql`
+    mutation VoteComment($commentId: Int!, $isUpvote: Boolean!) {
+  voteComment(commentId: $commentId, isUpvote: $isUpvote) {
+    errors {
+      ...RegularError
+    }
+    success
+    point
+  }
+}
+    ${RegularErrorFragmentDoc}`;
+export type VoteCommentMutationFn = Apollo.MutationFunction<VoteCommentMutation, VoteCommentMutationVariables>;
+
+/**
+ * __useVoteCommentMutation__
+ *
+ * To run a mutation, you first call `useVoteCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVoteCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [voteCommentMutation, { data, loading, error }] = useVoteCommentMutation({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *      isUpvote: // value for 'isUpvote'
+ *   },
+ * });
+ */
+export function useVoteCommentMutation(baseOptions?: Apollo.MutationHookOptions<VoteCommentMutation, VoteCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VoteCommentMutation, VoteCommentMutationVariables>(VoteCommentDocument, options);
+      }
+export type VoteCommentMutationHookResult = ReturnType<typeof useVoteCommentMutation>;
+export type VoteCommentMutationResult = Apollo.MutationResult<VoteCommentMutation>;
+export type VoteCommentMutationOptions = Apollo.BaseMutationOptions<VoteCommentMutation, VoteCommentMutationVariables>;
 export const VotePostDocument = gql`
     mutation VotePost($postId: Int!, $isUpvote: Boolean!) {
   votePost(postId: $postId, isUpvote: $isUpvote) {

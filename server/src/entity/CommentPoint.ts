@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -18,12 +19,20 @@ export class CommentPoint extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "bigint" })
   id: number;
 
+  @Field(() => Int)
+  @Column({ type: "int" })
+  value: number;
+
   @Field()
-  @Column()
-  isDecrement!: boolean;
+  @PrimaryColumn()
+  userId: number;
 
   @ManyToOne(() => User, (user) => user.commentPoints)
   user: User;
+
+  @Field()
+  @PrimaryColumn()
+  commentId: number;
 
   @ManyToOne(() => Comment, (comment) => comment.commentPoints)
   comment: Comment;

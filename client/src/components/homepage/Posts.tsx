@@ -24,7 +24,6 @@ export const Posts: React.FC<PostsProps> = ({}) => {
       setRenderPosts([<div key="loading">loading...</div>]);
     } else if (data && data.posts && data.posts.posts) {
       const posts = data.posts.posts.map((p) => {
-        console.log(p.title + " " + p.voteStatus);
         return <PostCard key={p.id} post={p} hasDetail={true} />;
       });
       setRenderPosts(posts);

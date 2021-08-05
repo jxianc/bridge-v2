@@ -18,9 +18,9 @@ export class PostPoint extends BaseEntity {
   @PrimaryGeneratedColumn({ type: "bigint" })
   id: number;
 
-  @Field()
-  @Column()
-  isDecrement!: boolean;
+  @Field(() => Int)
+  @Column({ type: "int" })
+  value: number;
 
   @ManyToOne(() => User, (user) => user.postPoints)
   user: User;

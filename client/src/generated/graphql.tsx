@@ -122,6 +122,7 @@ export type PointResponse = {
   __typename?: 'PointResponse';
   errors?: Maybe<Array<FieldError>>;
   success: Scalars['Boolean'];
+  point?: Maybe<Scalars['Int']>;
 };
 
 export type Post = {
@@ -375,6 +376,24 @@ export type RegisterMutation = (
       & Pick<User, 'createdAt' | 'updatedAt'>
       & RegularUserFragment
     )> }
+  ) }
+);
+
+export type VotePostMutationVariables = Exact<{
+  postId: Scalars['Int'];
+  isUpvote: Scalars['Boolean'];
+}>;
+
+
+export type VotePostMutation = (
+  { __typename?: 'Mutation' }
+  & { votePost: (
+    { __typename?: 'PointResponse' }
+    & Pick<PointResponse, 'success' | 'point'>
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & RegularErrorFragment
+    )>> }
   ) }
 );
 
@@ -821,6 +840,44 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const VotePostDocument = gql`
+    mutation VotePost($postId: Int!, $isUpvote: Boolean!) {
+  votePost(postId: $postId, isUpvote: $isUpvote) {
+    errors {
+      ...RegularError
+    }
+    success
+    point
+  }
+}
+    ${RegularErrorFragmentDoc}`;
+export type VotePostMutationFn = Apollo.MutationFunction<VotePostMutation, VotePostMutationVariables>;
+
+/**
+ * __useVotePostMutation__
+ *
+ * To run a mutation, you first call `useVotePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVotePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [votePostMutation, { data, loading, error }] = useVotePostMutation({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *      isUpvote: // value for 'isUpvote'
+ *   },
+ * });
+ */
+export function useVotePostMutation(baseOptions?: Apollo.MutationHookOptions<VotePostMutation, VotePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VotePostMutation, VotePostMutationVariables>(VotePostDocument, options);
+      }
+export type VotePostMutationHookResult = ReturnType<typeof useVotePostMutation>;
+export type VotePostMutationResult = Apollo.MutationResult<VotePostMutation>;
+export type VotePostMutationOptions = Apollo.BaseMutationOptions<VotePostMutation, VotePostMutationVariables>;
 export const CategoriesDocument = gql`
     query Categories {
   categories {

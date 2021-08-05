@@ -10,13 +10,14 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Post, PostsQuery } from "../../generated/graphql";
+import { Post, PostsQuery, useVotePostMutation } from "../../generated/graphql";
 import { unixToDate } from "../../utils/date";
 import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
 import NextLink from "next/link";
 import { BiDetail } from "react-icons/bi";
 import { FaRegEdit } from "react-icons/fa";
+import { gql } from "@apollo/client";
 
 interface PostCardProps {
   post: PostsQuery["posts"]["posts"][0];
@@ -24,6 +25,8 @@ interface PostCardProps {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
+  const [votePost] = useVotePostMutation();
+
   return (
     <Flex m={2} mb={8}>
       <VStack
@@ -36,11 +39,53 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
         shadow="2px 2px 6px #bababa"
       >
         <Box>
-          <Box _hover={{ color: "#00c43e", cursor: "pointer" }}>
+          <Box
+            _hover={{ color: "#00c43e", cursor: "pointer" }}
+            onClick={async () => {
+              const result = await votePost({
+                variables: { postId: post.id, isUpvote: true },
+              });
+              console.log(result);
+            }}
+          >
             <BsCaretUpFill />
           </Box>
           {post.points}
-          <Box _hover={{ color: "red", cursor: "pointer" }}>
+          <Box
+            _hover={{ color: "red", cursor: "pointer" }}
+            onClick={async () => {
+              const result = await votePost({
+                variables: { postId: post.id, isUpvote: false },
+                // update: (cache) => {
+                //   const data = cache.readFragment({
+                //     id: "Post:" + post.id,
+                //     fragment: gql`
+                //       fragment __ on Post {
+                //         id
+                //         points
+                //       }
+                //     `,
+                //   });
+                //   console.log(data);
+                //   if (data) {
+                //     const d: any = data;
+                //     const newPoints = d.points - 2;
+                //     cache.writeFragment({
+                //       id: "Post:" + post.id,
+                //       fragment: gql`
+                //         fragment __ on Post {
+                //           id
+                //           points
+                //         }
+                //       `,
+                //       data: { points: newPoints },
+                //     });
+                //   }
+                // },
+              });
+              console.log(result);
+            }}
+          >
             <BsCaretDownFill />
           </Box>
         </Box>

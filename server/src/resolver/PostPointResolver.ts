@@ -23,6 +23,9 @@ export class PointResponse {
 
   @Field()
   success: boolean;
+
+  @Field(() => Int, { nullable: true })
+  point?: number;
 }
 
 @Resolver()
@@ -66,13 +69,14 @@ export class PostPointResolver {
         // user voted before
         if (isUpvote) {
           // is upvote
-          if (existingPoint.isDecrement) {
+          if (existingPoint.value === -1) {
             // is downvote previously
-            await PostPoint.remove(existingPoint);
-            post.points = post.points + 1;
+            await PostPoint.update({ id: existingPoint.id }, { value: 1 });
+            post.points = post.points + 2;
             await post.save();
             result = {
               success: true,
+              point: post.points,
             };
           } else {
             // is upvote previously
@@ -83,13 +87,14 @@ export class PostPointResolver {
           }
         } else {
           // is downvote
-          if (!existingPoint.isDecrement) {
+          if (existingPoint.value === 1) {
             // is upvote previously
-            await PostPoint.remove(existingPoint);
-            post.points = post.points - 1;
+            await PostPoint.update({ id: existingPoint.id }, { value: -1 });
+            post.points = post.points - 2;
             await post.save();
             result = {
               success: true,
+              point: post.points,
             };
           } else {
             result = {
@@ -103,7 +108,7 @@ export class PostPointResolver {
       } else {
         // user never vote before
         await PostPoint.create({
-          isDecrement: !isUpvote,
+          value: isUpvote ? 1 : -1,
           user,
           post,
         }).save();
@@ -117,6 +122,7 @@ export class PostPointResolver {
         await post.save();
         result = {
           success: true,
+          point: post.points,
         };
       }
     });

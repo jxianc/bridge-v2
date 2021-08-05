@@ -23,7 +23,6 @@ export const Posts: React.FC<PostsProps> = ({}) => {
     if (!data) {
       setRenderPosts([<div key="loading">loading...</div>]);
     } else if (data && data.posts && data.posts.posts) {
-      console.log(data.posts.posts);
       const posts = data.posts.posts.map((p) => {
         return <PostCard key={p.id} post={p} hasDetail={true} />;
       });

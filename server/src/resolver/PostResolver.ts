@@ -1,7 +1,3 @@
-import { Post } from "../entity/Post";
-import { PostCategory } from "../entity/PostCategory";
-import { isAuth } from "../middleware/isAuth";
-import { postValidator } from "../utils/postValidator";
 import {
   Arg,
   Ctx,
@@ -14,10 +10,14 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
-import { FieldError } from "../utils/common";
-import { MyContext } from "../MyContext";
-import { User } from "../entity/User";
 import { getConnection } from "typeorm";
+import { Post } from "../entity/Post";
+import { PostCategory } from "../entity/PostCategory";
+import { User } from "../entity/User";
+import { isAuth } from "../middleware/isAuth";
+import { MyContext } from "../MyContext";
+import { FieldError } from "../utils/common";
+import { postValidator } from "../utils/postValidator";
 
 @ObjectType()
 class PostResponse {
@@ -52,8 +52,25 @@ class PaginatedPosts {
   hasMore: boolean;
 }
 
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
+  // @FieldResolver(() => Int, { nullable: true })
+  // async voteStatus(
+  //   @Root() post: Post,
+  //   @Ctx() { postPointLoader, req }: MyContext
+  // ) {
+  //   if (!req.session!.userId) {
+  //     return null;
+  //   }
+
+  //   const postPoint = await postPointLoader.load({
+  //     postId: post.id,
+  //     userId: req.session!.userId,
+  //   });
+
+  //   return postPoint ? postPoint.value : null;
+  // }
+
   @Query(() => PostResponse)
   async singlePost(
     @Arg("postId", () => Int) postId: number
@@ -62,6 +79,7 @@ export class PostResolver {
       where: { id: postId },
       relations: ["user", "postCategory", "comments", "comments.user"],
     });
+
     if (!post) {
       return {
         errors: [

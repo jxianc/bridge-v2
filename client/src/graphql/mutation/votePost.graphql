@@ -1,0 +1,9 @@
+mutation VotePost($postId: Int!, $isUpvote: Boolean!) {
+  votePost(postId: $postId, isUpvote: $isUpvote) {
+    errors {
+      ...RegularError
+    }
+    success
+    point
+  }
+}

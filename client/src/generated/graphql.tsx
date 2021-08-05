@@ -131,7 +131,9 @@ export type Post = {
   title: Scalars['String'];
   body: Scalars['String'];
   points: Scalars['Float'];
+  voteStatus?: Maybe<Scalars['Int']>;
   comments?: Maybe<Array<Comment>>;
+  userId: Scalars['Float'];
   user: User;
   postCategory: PostCategory;
   createdAt: Scalars['String'];
@@ -235,7 +237,7 @@ export type RegularErrorFragment = (
 
 export type RegularPostFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+  & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'voteStatus' | 'createdAt' | 'updatedAt'>
   & { user: (
     { __typename?: 'User' }
     & RegularUserFragment
@@ -457,6 +459,7 @@ export type PostsQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
+      & Pick<Post, 'voteStatus'>
       & RegularPostFragment
     )> }
   ) }
@@ -551,6 +554,7 @@ export const RegularPostFragmentDoc = gql`
   title
   body
   points
+  voteStatus
   user {
     ...RegularUser
   }
@@ -1001,6 +1005,7 @@ export const PostsDocument = gql`
     hasMore
     posts {
       ...RegularPost
+      voteStatus
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  PrimaryColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -22,8 +23,16 @@ export class PostPoint extends BaseEntity {
   @Column({ type: "int" })
   value: number;
 
+  @Field()
+  @PrimaryColumn()
+  userId: number;
+
   @ManyToOne(() => User, (user) => user.postPoints)
   user: User;
+
+  @Field()
+  @PrimaryColumn()
+  postId: number;
 
   @ManyToOne(() => Post, (post) => post.postPoints)
   post: Post;

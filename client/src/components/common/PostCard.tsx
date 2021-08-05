@@ -10,14 +10,19 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Post, PostsQuery, useVotePostMutation } from "../../generated/graphql";
+import {
+  Post,
+  PostsQuery,
+  useVotePostMutation,
+  VotePostMutation,
+} from "../../generated/graphql";
 import { unixToDate } from "../../utils/date";
 import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
 import NextLink from "next/link";
 import { BiDetail } from "react-icons/bi";
 import { FaRegEdit } from "react-icons/fa";
-import { gql } from "@apollo/client";
+import { ApolloCache, gql } from "@apollo/client";
 
 interface PostCardProps {
   post: PostsQuery["posts"]["posts"][0];
@@ -26,6 +31,43 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
   const [votePost] = useVotePostMutation();
+
+  const updateAfterVote = (
+    value: number,
+    postId: number,
+    cache: ApolloCache<VotePostMutation>
+  ) => {
+    const data = cache.readFragment<{
+      id: number;
+      points: number;
+      voteStatus: number | null;
+    }>({
+      id: "Post:" + postId,
+      fragment: gql`
+        fragment _ on Post {
+          id
+          points
+          voteStatus
+        }
+      `,
+    });
+    if (data) {
+      if (data.voteStatus === value) {
+        return;
+      }
+      const newPoints = data.points + (!data.voteStatus ? 1 : 2) * value;
+      cache.writeFragment({
+        id: "Post:" + postId,
+        fragment: gql`
+          fragment __ on Post {
+            points
+            voteStatus
+          }
+        `,
+        data: { points: newPoints, voteStatus: value },
+      });
+    }
+  };
 
   return (
     <Flex m={2} mb={8}>
@@ -40,51 +82,33 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
       >
         <Box>
           <Box
-            _hover={{ color: "#00c43e", cursor: "pointer" }}
+            // _hover={{ color: "#00c43e", cursor: "pointer" }}
             onClick={async () => {
-              const result = await votePost({
+              if (post.voteStatus === 1) {
+                return;
+              }
+              await votePost({
                 variables: { postId: post.id, isUpvote: true },
+                update: (cache) => updateAfterVote(1, post.id, cache),
               });
-              console.log(result);
             }}
+            color={post.voteStatus === 1 ? "green" : undefined}
           >
             <BsCaretUpFill />
           </Box>
           {post.points}
           <Box
-            _hover={{ color: "red", cursor: "pointer" }}
+            // _hover={{ color: "red", cursor: "pointer" }}
             onClick={async () => {
-              const result = await votePost({
+              if (post.voteStatus === -1) {
+                return;
+              }
+              await votePost({
                 variables: { postId: post.id, isUpvote: false },
-                // update: (cache) => {
-                //   const data = cache.readFragment({
-                //     id: "Post:" + post.id,
-                //     fragment: gql`
-                //       fragment __ on Post {
-                //         id
-                //         points
-                //       }
-                //     `,
-                //   });
-                //   console.log(data);
-                //   if (data) {
-                //     const d: any = data;
-                //     const newPoints = d.points - 2;
-                //     cache.writeFragment({
-                //       id: "Post:" + post.id,
-                //       fragment: gql`
-                //         fragment __ on Post {
-                //           id
-                //           points
-                //         }
-                //       `,
-                //       data: { points: newPoints },
-                //     });
-                //   }
-                // },
+                update: (cache) => updateAfterVote(-1, post.id, cache),
               });
-              console.log(result);
             }}
+            color={post.voteStatus === -1 ? "red" : undefined}
           >
             <BsCaretDownFill />
           </Box>

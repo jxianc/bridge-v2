@@ -12,6 +12,8 @@ import { PostCategoryResolver } from "./resolver/PostCategoryResolver";
 import { PostPointResolver } from "./resolver/PostPointResolver";
 import { PostResolver } from "./resolver/PostResolver";
 import { UserResolver } from "./resolver/UserResolver";
+import { createPostPointLoader } from "./utils/createPostPointLoader";
+import { createUserLoader } from "./utils/createUserLoader";
 
 require("dotenv").config();
 
@@ -57,7 +59,13 @@ const main = async () => {
   });
   const apolloServer = new ApolloServer({
     schema,
-    context: ({ req, res }) => ({ req, res, redis }),
+    context: ({ req, res }) => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+      postPointLoader: createPostPointLoader(),
+    }),
   });
   apolloServer.applyMiddleware({ app, cors: false });
 

@@ -34,7 +34,7 @@ export class Post extends BaseEntity {
   points!: number;
 
   @Field(() => Int, { nullable: true })
-  voteStatus: number | null;
+  voteStatus: number | null; // 1 or -1 or null
 
   @Field(() => [Comment], { nullable: true })
   @OneToMany(() => Comment, (comment) => comment.post)
@@ -42,6 +42,10 @@ export class Post extends BaseEntity {
 
   @OneToMany(() => PostPoint, (postPoint) => postPoint.post)
   postPoints: PostPoint[];
+
+  @Field()
+  @Column()
+  userId: number;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts)

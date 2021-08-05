@@ -1,34 +1,17 @@
-import React from "react";
+import { Box, Button, Flex, VStack } from "@chakra-ui/react";
 import { NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { BrowserHead } from "../../components/BrowserHead";
+import { CommentCard } from "../../components/common/CommentCard";
+import { PostCard } from "../../components/common/PostCard";
+import { Wrapper } from "../../components/Wrapper";
 import {
-  Comment,
   useCommentsByPostQuery,
   useSinglePostQuery,
 } from "../../generated/graphql";
-import { useEffect } from "react";
 import { withApollo } from "../../utils/withApollo";
-import { Wrapper } from "../../components/Wrapper";
-import { BrowserHead } from "../../components/BrowserHead";
-import { useState } from "react";
-import {
-  Badge,
-  Box,
-  Button,
-  Flex,
-  HStack,
-  SimpleGrid,
-  Spacer,
-  Tag,
-  VStack,
-} from "@chakra-ui/react";
-import { BsCaretUpFill, BsCaretDownFill, BsReplyAllFill } from "react-icons/bs";
-import { categoryColor } from "../../utils/categoryColor";
-import { unixToDate } from "../../utils/date";
-import { FaRegEdit } from "react-icons/fa";
-import { CommentCard } from "../../components/common/CommentCard";
-import { PostCard } from "../../components/common/PostCard";
 
 const Post: NextPage<{ postId: string }> = () => {
   const [renderError, setRenderError] = useState<JSX.Element>();

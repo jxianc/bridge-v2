@@ -1,13 +1,16 @@
+import { PostPoint } from "../entity/PostPoint";
 import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   InputType,
   Int,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
@@ -54,22 +57,28 @@ class PaginatedPosts {
 
 @Resolver(Post)
 export class PostResolver {
-  // @FieldResolver(() => Int, { nullable: true })
-  // async voteStatus(
-  //   @Root() post: Post,
-  //   @Ctx() { postPointLoader, req }: MyContext
-  // ) {
-  //   if (!req.session!.userId) {
-  //     return null;
-  //   }
+  @FieldResolver(() => User)
+  user(@Root() post: Post, @Ctx() { userLoader }: MyContext) {
+    return userLoader.load(post.userId);
+  }
 
-  //   const postPoint = await postPointLoader.load({
-  //     postId: post.id,
-  //     userId: req.session!.userId,
-  //   });
+  @FieldResolver(() => Int, { nullable: true })
+  async voteStatus(@Root() post: Post, @Ctx() { req }: MyContext) {
+    if (!req.session!.userId) {
+      return null;
+    }
+    // const postPoint = await postPointLoader.load({
+    //   postId: post.id,
+    //   userId: req.session!.userId,
+    // });
 
-  //   return postPoint ? postPoint.value : null;
-  // }
+    // return postPoint ? postPoint.value : null;
+    const postPoint = await PostPoint.findOne({
+      where: { postId: post.id, userId: req.session!.userId },
+    });
+
+    return postPoint ? postPoint.value : null;
+  }
 
   @Query(() => PostResponse)
   async singlePost(
@@ -77,7 +86,7 @@ export class PostResolver {
   ): Promise<PostResponse> {
     const post = await Post.findOne({
       where: { id: postId },
-      relations: ["user", "postCategory", "comments", "comments.user"],
+      relations: ["postCategory", "comments", "comments.user"],
     });
 
     if (!post) {
@@ -108,7 +117,7 @@ export class PostResolver {
       .where(cursor ? `post."createdAt" < :cursor` : "", {
         cursor: new Date(parseInt(cursor as string)),
       })
-      .leftJoinAndSelect("post.user", "user")
+      // .leftJoinAndSelect("post.user", "user")
       .leftJoinAndSelect("post.postCategory", "postCategory")
       .leftJoinAndSelect("post.comments", "comment")
       .orderBy("post.createdAt", "DESC")
@@ -142,7 +151,7 @@ export class PostResolver {
           categoryId,
         }
       )
-      .leftJoinAndSelect("post.user", "user")
+      // .leftJoinAndSelect("post.user", "user")
       .leftJoinAndSelect("post.postCategory", "postCategory")
       .leftJoinAndSelect("post.comments", "comment")
       .orderBy("post.createdAt", "DESC")

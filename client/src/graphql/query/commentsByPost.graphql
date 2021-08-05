@@ -2,12 +2,9 @@ query CommentsByPost($postId: Int!, $limit: Int!, $cursor: String) {
   commentsByPost(postId: $postId, limit: $limit, cursor: $cursor) {
     hasMore
     comments {
-      id
-      body
-      points
+      ...RegularComment
       user {
-        id
-        username
+        ...RegularUser
       }
       createdAt
       updatedAt

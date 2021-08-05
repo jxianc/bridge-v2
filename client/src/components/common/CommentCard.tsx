@@ -10,13 +10,13 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { BsCaretDownFill, BsCaretUpFill } from "react-icons/bs";
-import { Comment } from "../../generated/graphql";
+import { Comment, CommentsByPostQuery } from "../../generated/graphql";
 import { unixToDate } from "../../utils/date";
 import NextLink from "next/link";
 import { FaRegEdit } from "react-icons/fa";
 
 interface CommentCardProps {
-  comment: Comment;
+  comment: CommentsByPostQuery["commentsByPost"]["comments"][0];
 }
 
 export const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {

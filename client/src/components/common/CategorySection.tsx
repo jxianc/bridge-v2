@@ -36,7 +36,7 @@ export const CategorySection: React.FC<CategorySectionProps> = ({}) => {
             </NextLink>
             {obj.posts.map((p) => {
               return (
-                <NextLink href={`/post/${p.id}`}>
+                <NextLink href={`/post/${p.id}`} key={p.id}>
                   <Box
                     key={p.id}
                     bg="#FFABBF"

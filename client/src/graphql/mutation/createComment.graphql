@@ -5,12 +5,9 @@ mutation CreateComment($commentInput: CommentInput!) {
       message
     }
     comment {
-      id
-      body
-      points
+      ...RegularComment
       user {
-        id
-        username
+        ...RegularUser
       }
       post {
         id

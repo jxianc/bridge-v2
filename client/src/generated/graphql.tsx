@@ -45,6 +45,8 @@ export type FieldError = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  votePost: PointResponse;
+  voteComment: PointResponse;
   createComment: CommentResponse;
   createPost: PostResponse;
   editPost: PostResponse;
@@ -53,6 +55,18 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   forgotPassword: Scalars['Boolean'];
   changePassword: UserResponse;
+};
+
+
+export type MutationVotePostArgs = {
+  isUpvote: Scalars['Boolean'];
+  postId: Scalars['Int'];
+};
+
+
+export type MutationVoteCommentArgs = {
+  isUpvote: Scalars['Boolean'];
+  commentId: Scalars['Int'];
 };
 
 
@@ -102,6 +116,12 @@ export type PaginatedPosts = {
   __typename?: 'PaginatedPosts';
   posts: Array<Post>;
   hasMore: Scalars['Boolean'];
+};
+
+export type PointResponse = {
+  __typename?: 'PointResponse';
+  errors?: Maybe<Array<FieldError>>;
+  success: Scalars['Boolean'];
 };
 
 export type Post = {
@@ -202,9 +222,29 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
+export type RegularCommentFragment = (
+  { __typename?: 'Comment' }
+  & Pick<Comment, 'id' | 'body' | 'points'>
+);
+
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
   & Pick<FieldError, 'field' | 'message'>
+);
+
+export type RegularPostFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+  & { user: (
+    { __typename?: 'User' }
+    & RegularUserFragment
+  ), postCategory: (
+    { __typename?: 'PostCategory' }
+    & Pick<PostCategory, 'id' | 'name'>
+  ), comments?: Maybe<Array<(
+    { __typename?: 'Comment' }
+    & RegularCommentFragment
+  )>> }
 );
 
 export type RegularUserFragment = (
@@ -247,14 +287,15 @@ export type CreateCommentMutation = (
       & Pick<FieldError, 'field' | 'message'>
     )>>, comment?: Maybe<(
       { __typename?: 'Comment' }
-      & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      & Pick<Comment, 'createdAt' | 'updatedAt'>
       & { user: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
+        & RegularUserFragment
       ), post: (
         { __typename?: 'Post' }
         & Pick<Post, 'id' | 'title'>
       ) }
+      & RegularCommentFragment
     )> }
   ) }
 );
@@ -270,20 +311,10 @@ export type CreatePostMutation = (
     { __typename?: 'PostResponse' }
     & { errors?: Maybe<Array<(
       { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
+      & RegularErrorFragment
     )>>, post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
-      ), postCategory: (
-        { __typename?: 'PostCategory' }
-        & Pick<PostCategory, 'id' | 'name'>
-      ), comments?: Maybe<Array<(
-        { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'body'>
-      )>> }
+      & RegularPostFragment
     )> }
   ) }
 );
@@ -372,11 +403,12 @@ export type CommentsByPostQuery = (
     & Pick<PaginatedComments, 'hasMore'>
     & { comments: Array<(
       { __typename?: 'Comment' }
-      & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+      & Pick<Comment, 'createdAt' | 'updatedAt'>
       & { user: (
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
+        & RegularUserFragment
       ) }
+      & RegularCommentFragment
     )> }
   ) }
 );
@@ -406,17 +438,7 @@ export type PostsQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
-      ), postCategory: (
-        { __typename?: 'PostCategory' }
-        & Pick<PostCategory, 'id' | 'name'>
-      ), comments?: Maybe<Array<(
-        { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-      )>> }
+      & RegularPostFragment
     )> }
   ) }
 );
@@ -435,17 +457,7 @@ export type PostsByCategoryQuery = (
     & Pick<PaginatedPosts, 'hasMore'>
     & { posts: Array<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
-      ), postCategory: (
-        { __typename?: 'PostCategory' }
-        & Pick<PostCategory, 'id' | 'name'>
-      ), comments?: Maybe<Array<(
-        { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'body' | 'points'>
-      )>> }
+      & RegularPostFragment
     )> }
   ) }
 );
@@ -478,24 +490,18 @@ export type SinglePostQuery = (
     { __typename?: 'PostResponse' }
     & { errors?: Maybe<Array<(
       { __typename?: 'FieldError' }
-      & Pick<FieldError, 'field' | 'message'>
+      & RegularErrorFragment
     )>>, post?: Maybe<(
       { __typename?: 'Post' }
-      & Pick<Post, 'id' | 'title' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
-      & { user: (
-        { __typename?: 'User' }
-        & Pick<User, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>
-      ), postCategory: (
-        { __typename?: 'PostCategory' }
-        & Pick<PostCategory, 'id' | 'name'>
-      ), comments?: Maybe<Array<(
+      & { comments?: Maybe<Array<(
         { __typename?: 'Comment' }
-        & Pick<Comment, 'id' | 'body' | 'points' | 'createdAt' | 'updatedAt'>
+        & Pick<Comment, 'createdAt' | 'updatedAt'>
         & { user: (
           { __typename?: 'User' }
-          & Pick<User, 'id' | 'username'>
+          & RegularUserFragment
         ) }
       )>> }
+      & RegularPostFragment
     )> }
   ) }
 );
@@ -513,6 +519,34 @@ export const RegularUserFragmentDoc = gql`
   email
 }
     `;
+export const RegularCommentFragmentDoc = gql`
+    fragment RegularComment on Comment {
+  id
+  body
+  points
+}
+    `;
+export const RegularPostFragmentDoc = gql`
+    fragment RegularPost on Post {
+  id
+  title
+  body
+  points
+  user {
+    ...RegularUser
+  }
+  postCategory {
+    id
+    name
+  }
+  comments {
+    ...RegularComment
+  }
+  createdAt
+  updatedAt
+}
+    ${RegularUserFragmentDoc}
+${RegularCommentFragmentDoc}`;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($token: String!, $newPassword: String!) {
   changePassword(token: $token, newPassword: $newPassword) {
@@ -563,12 +597,9 @@ export const CreateCommentDocument = gql`
       message
     }
     comment {
-      id
-      body
-      points
+      ...RegularComment
       user {
-        id
-        username
+        ...RegularUser
       }
       post {
         id
@@ -579,7 +610,8 @@ export const CreateCommentDocument = gql`
     }
   }
 }
-    `;
+    ${RegularCommentFragmentDoc}
+${RegularUserFragmentDoc}`;
 export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
 
 /**
@@ -610,35 +642,15 @@ export const CreatePostDocument = gql`
     mutation CreatePost($postInput: PostInput!) {
   createPost(postInput: $postInput) {
     errors {
-      field
-      message
+      ...RegularError
     }
     post {
-      id
-      title
-      body
-      points
-      user {
-        id
-        username
-        email
-        createdAt
-        updatedAt
-      }
-      postCategory {
-        id
-        name
-      }
-      comments {
-        id
-        body
-      }
-      createdAt
-      updatedAt
+      ...RegularPost
     }
   }
 }
-    `;
+    ${RegularErrorFragmentDoc}
+${RegularPostFragmentDoc}`;
 export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
 
 /**
@@ -849,19 +861,17 @@ export const CommentsByPostDocument = gql`
   commentsByPost(postId: $postId, limit: $limit, cursor: $cursor) {
     hasMore
     comments {
-      id
-      body
-      points
+      ...RegularComment
       user {
-        id
-        username
+        ...RegularUser
       }
       createdAt
       updatedAt
     }
   }
 }
-    `;
+    ${RegularCommentFragmentDoc}
+${RegularUserFragmentDoc}`;
 
 /**
  * __useCommentsByPostQuery__
@@ -933,34 +943,11 @@ export const PostsDocument = gql`
   posts(limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      id
-      title
-      body
-      points
-      user {
-        id
-        username
-        email
-        createdAt
-        updatedAt
-      }
-      postCategory {
-        id
-        name
-      }
-      comments {
-        id
-        body
-        points
-        createdAt
-        updatedAt
-      }
-      createdAt
-      updatedAt
+      ...RegularPost
     }
   }
 }
-    `;
+    ${RegularPostFragmentDoc}`;
 
 /**
  * __usePostsQuery__
@@ -995,32 +982,11 @@ export const PostsByCategoryDocument = gql`
   postsByCategory(categoryId: $categoryId, limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      id
-      title
-      body
-      points
-      user {
-        id
-        username
-        email
-        createdAt
-        updatedAt
-      }
-      postCategory {
-        id
-        name
-      }
-      comments {
-        id
-        body
-        points
-      }
-      createdAt
-      updatedAt
+      ...RegularPost
     }
   }
 }
-    `;
+    ${RegularPostFragmentDoc}`;
 
 /**
  * __usePostsByCategoryQuery__
@@ -1096,42 +1062,23 @@ export const SinglePostDocument = gql`
     query SinglePost($postId: Int!) {
   singlePost(postId: $postId) {
     errors {
-      field
-      message
+      ...RegularError
     }
     post {
-      id
-      title
-      body
-      points
-      user {
-        id
-        username
-        email
-        createdAt
-        updatedAt
-      }
-      postCategory {
-        id
-        name
-      }
+      ...RegularPost
       comments {
-        id
-        body
         user {
-          id
-          username
+          ...RegularUser
         }
-        points
         createdAt
         updatedAt
       }
-      createdAt
-      updatedAt
     }
   }
 }
-    `;
+    ${RegularErrorFragmentDoc}
+${RegularPostFragmentDoc}
+${RegularUserFragmentDoc}`;
 
 /**
  * __useSinglePostQuery__

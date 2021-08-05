@@ -10,7 +10,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import React from "react";
-import { Post } from "../../generated/graphql";
+import { Post, PostsQuery } from "../../generated/graphql";
 import { unixToDate } from "../../utils/date";
 import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
@@ -19,10 +19,11 @@ import { BiDetail } from "react-icons/bi";
 import { FaRegEdit } from "react-icons/fa";
 
 interface PostCardProps {
-  post: Post;
+  post: PostsQuery["posts"]["posts"][0];
+  hasDetail: boolean;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post }) => {
+export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
   return (
     <Flex m={2} mb={8}>
       <VStack
@@ -74,7 +75,6 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   {post.postCategory.name}
                 </Badge>
               </NextLink>
-
               <Tag colorScheme="whatsapp" shadow="md">
                 {post.user.username}
               </Tag>
@@ -105,16 +105,18 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     edit
                   </Button>
                 </NextLink>
-                <NextLink href={`/post/${post.id}`}>
-                  <Button
-                    size="sm"
-                    shadow="md"
-                    leftIcon={<BiDetail />}
-                    colorScheme="gray"
-                  >
-                    detail
-                  </Button>
-                </NextLink>
+                {hasDetail ? (
+                  <NextLink href={`/post/${post.id}`}>
+                    <Button
+                      size="sm"
+                      shadow="md"
+                      leftIcon={<BiDetail />}
+                      colorScheme="gray"
+                    >
+                      detail
+                    </Button>
+                  </NextLink>
+                ) : null}
               </HStack>
             </Box>
           </Box>

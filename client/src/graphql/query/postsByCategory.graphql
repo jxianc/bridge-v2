@@ -2,28 +2,7 @@ query PostsByCategory($categoryId: Int!, $limit: Int!, $cursor: String) {
   postsByCategory(categoryId: $categoryId, limit: $limit, cursor: $cursor) {
     hasMore
     posts {
-      id
-      title
-      body
-      points
-      user {
-        id
-        username
-        email
-        createdAt
-        updatedAt
-      }
-      postCategory {
-        id
-        name
-      }
-      comments {
-        id
-        body
-        points
-      }
-      createdAt
-      updatedAt
+      ...RegularPost
     }
   }
 }

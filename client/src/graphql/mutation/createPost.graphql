@@ -1,31 +1,10 @@
 mutation CreatePost($postInput: PostInput!) {
   createPost(postInput: $postInput) {
     errors {
-      field
-      message
+      ...RegularError
     }
     post {
-      id
-      title
-      body
-      points
-      user {
-        id
-        username
-        email
-        createdAt
-        updatedAt
-      }
-      postCategory {
-        id
-        name
-      }
-      comments {
-        id
-        body
-      }
-      createdAt
-      updatedAt
+      ...RegularPost
     }
   }
 }

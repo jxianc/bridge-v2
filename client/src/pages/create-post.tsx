@@ -6,7 +6,7 @@ import { BrowserHead } from "../components/BrowserHead";
 import CategoryDropDown from "../components/categoryDropDown";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
-import { useCreatePostMutation, usePostsLazyQuery } from "../generated/graphql";
+import { useCreatePostMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useIsAuth } from "../utils/useIsAuth";
 import { withApollo } from "../utils/withApollo";
@@ -15,7 +15,6 @@ interface CreatePostProps {}
 
 const CreatePost: React.FC<CreatePostProps> = ({}) => {
   const [createPost] = useCreatePostMutation();
-  const [execPosts] = usePostsLazyQuery();
   const [postCategoryId, setPostCategoryId] = useState<number>(0);
   const [categoryError, setCategoryError] = useState<string>("");
   const router = useRouter();
@@ -42,7 +41,6 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
           });
           if (response.data?.createPost.errors) {
             const errorMap = toErrorMap(response.data.createPost.errors);
-            console.log(errorMap);
             if ("postCategory" in errorMap) {
               setCategoryError(errorMap.postCategory);
             }

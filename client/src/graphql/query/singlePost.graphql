@@ -1,38 +1,17 @@
 query SinglePost($postId: Int!) {
   singlePost(postId: $postId) {
     errors {
-      field
-      message
+      ...RegularError
     }
     post {
-      id
-      title
-      body
-      points
-      user {
-        id
-        username
-        email
-        createdAt
-        updatedAt
-      }
-      postCategory {
-        id
-        name
-      }
+      ...RegularPost
       comments {
-        id
-        body
         user {
-          id
-          username
+          ...RegularUser
         }
-        points
         createdAt
         updatedAt
       }
-      createdAt
-      updatedAt
     }
   }
 }

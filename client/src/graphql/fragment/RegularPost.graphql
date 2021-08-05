@@ -1,0 +1,18 @@
+fragment RegularPost on Post {
+  id
+  title
+  body
+  points
+  user {
+    ...RegularUser
+  }
+  postCategory {
+    id
+    name
+  }
+  comments {
+    ...RegularComment
+  }
+  createdAt
+  updatedAt
+}

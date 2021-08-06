@@ -68,7 +68,6 @@ const Post: NextPage<{ postId: string }> = () => {
   useEffect(() => {
     if (data && data.singlePost && data.singlePost.post) {
       const post = data.singlePost.post;
-      console.log(post);
       setRenderPost(<PostCard post={post} hasDetail={false} />);
     }
   }, [data]);
@@ -133,9 +132,12 @@ const Post: NextPage<{ postId: string }> = () => {
       <BrowserHead title="Post" />
       {renderError ? renderError : null}
       {renderPost ? renderPost : null}
-      <Box m="0 auto" maxH="500px" overflow="scroll">
+      <Box m="0 auto" maxH="490px" overflow="scroll">
         {renderComment ? renderComment : null}
         <Box>{loadMoreButton}</Box>
+      </Box>
+      <Box textAlign="center" color="gray.600" fontStyle="italic" fontSize="sm">
+        scroll down for more
       </Box>
     </Wrapper>
   );

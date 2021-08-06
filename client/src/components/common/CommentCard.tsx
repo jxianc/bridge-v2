@@ -20,6 +20,7 @@ import { unixToDate } from "../../utils/date";
 import NextLink from "next/link";
 import { FaRegEdit } from "react-icons/fa";
 import { ApolloCache, gql } from "@apollo/client";
+import { useRouter } from "next/router";
 
 interface CommentCardProps {
   comment: CommentsByPostQuery["commentsByPost"]["comments"][0];
@@ -27,6 +28,8 @@ interface CommentCardProps {
 
 export const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
   const [voteComment] = useVoteCommentMutation();
+  const router = useRouter();
+  const postId = router.query.postId;
 
   const updateAfterVote = (
     value: number,
@@ -84,10 +87,14 @@ export const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
               if (comment.voteStatus === 1) {
                 return;
               }
-              await voteComment({
-                variables: { commentId: comment.id, isUpvote: true },
-                update: (cache) => updateAfterVote(1, comment.id, cache),
-              });
+              try {
+                await voteComment({
+                  variables: { commentId: comment.id, isUpvote: true },
+                  update: (cache) => updateAfterVote(1, comment.id, cache),
+                });
+              } catch (err) {
+                router.replace(`/login?next=/post/${postId}`);
+              }
             }}
           >
             <BsCaretUpFill />
@@ -100,10 +107,14 @@ export const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
               if (comment.voteStatus === -1) {
                 return;
               }
-              await voteComment({
-                variables: { commentId: comment.id, isUpvote: false },
-                update: (cache) => updateAfterVote(-1, comment.id, cache),
-              });
+              try {
+                await voteComment({
+                  variables: { commentId: comment.id, isUpvote: false },
+                  update: (cache) => updateAfterVote(-1, comment.id, cache),
+                });
+              } catch (err) {
+                router.replace(`/login?next=/post/${postId}`);
+              }
             }}
           >
             <BsCaretDownFill />

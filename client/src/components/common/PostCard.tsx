@@ -1,3 +1,4 @@
+import { ApolloCache, gql } from "@apollo/client";
 import {
   Badge,
   Box,
@@ -9,20 +10,19 @@ import {
   Tag,
   VStack,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
+import { BiDetail } from "react-icons/bi";
+import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
+import { FaRegEdit } from "react-icons/fa";
 import {
-  Post,
   PostsQuery,
   useVotePostMutation,
   VotePostMutation,
 } from "../../generated/graphql";
-import { unixToDate } from "../../utils/date";
-import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
 import { categoryColor } from "../../utils/categoryColor";
-import NextLink from "next/link";
-import { BiDetail } from "react-icons/bi";
-import { FaRegEdit } from "react-icons/fa";
-import { ApolloCache, gql } from "@apollo/client";
+import { unixToDate } from "../../utils/date";
 
 interface PostCardProps {
   post: PostsQuery["posts"]["posts"][0];
@@ -31,6 +31,7 @@ interface PostCardProps {
 
 export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
   const [votePost] = useVotePostMutation();
+  const router = useRouter();
 
   const updateAfterVote = (
     value: number,
@@ -88,10 +89,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
               if (post.voteStatus === 1) {
                 return;
               }
-              await votePost({
-                variables: { postId: post.id, isUpvote: true },
-                update: (cache) => updateAfterVote(1, post.id, cache),
-              });
+              try {
+                await votePost({
+                  variables: { postId: post.id, isUpvote: true },
+                  update: (cache) => updateAfterVote(1, post.id, cache),
+                });
+              } catch (err) {
+                router.replace(`/login?next=/post/${post.id}`);
+              }
             }}
           >
             <BsCaretUpFill />
@@ -104,10 +109,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
               if (post.voteStatus === -1) {
                 return;
               }
-              await votePost({
-                variables: { postId: post.id, isUpvote: false },
-                update: (cache) => updateAfterVote(-1, post.id, cache),
-              });
+              try {
+                await votePost({
+                  variables: { postId: post.id, isUpvote: false },
+                  update: (cache) => updateAfterVote(-1, post.id, cache),
+                });
+              } catch (err) {
+                router.replace(`/login?next=/post/${post.id}`);
+              }
             }}
           >
             <BsCaretDownFill />

@@ -1,13 +1,13 @@
 import React from "react";
 import { Form, Formik } from "formik";
-import { Wrapper } from "../components/Wrapper";
+import { Wrapper } from "../components/common/Wrapper";
 import { InputField } from "../components/input/InputField";
 import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { useRouter } from "next/dist/client/router";
 import { toErrorMap } from "../utils/toErrorMap";
 import { Box, Button, Link } from "@chakra-ui/react";
 import { FiUserPlus } from "react-icons/fi";
-import { BrowserHead } from "../components/BrowserHead";
+import { BrowserHead } from "../components/head/BrowserHead";
 import NextLink from "next/link";
 import { withApollo } from "../utils/withApollo";
 

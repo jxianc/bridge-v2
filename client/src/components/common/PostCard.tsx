@@ -125,7 +125,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
         <Spacer />
         <Box>
           {post.comments ? post.comments.length : 0}
-          <NextLink href={`/create-comment/${post.id}`}>
+          <NextLink href={`/post/create-comment/${post.id}`}>
             <Box title="Comment" _hover={{ color: "gray", cursor: "pointer" }}>
               <BsReplyAllFill />
             </Box>

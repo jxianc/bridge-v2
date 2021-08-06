@@ -3,13 +3,13 @@ import { Form, Formik } from "formik";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { BrowserHead } from "../../components/BrowserHead";
-import { InputField } from "../../components/input/InputField";
-import { Wrapper } from "../../components/Wrapper";
-import { useCreateCommentMutation } from "../../generated/graphql";
-import { toErrorMap } from "../../utils/toErrorMap";
-import { useIsAuthForCreateComment } from "../../utils/useIsAuth";
-import { withApollo } from "../../utils/withApollo";
+import { BrowserHead } from "../../../components/head/BrowserHead";
+import { InputField } from "../../../components/input/InputField";
+import { Wrapper } from "../../../components/common/Wrapper";
+import { useCreateCommentMutation } from "../../../generated/graphql";
+import { toErrorMap } from "../../../utils/toErrorMap";
+import { useIsAuthForCreateComment } from "../../../utils/useIsAuth";
+import { withApollo } from "../../../utils/withApollo";
 
 const CreateComment: NextPage<{ postId: string }> = () => {
   const router = useRouter();

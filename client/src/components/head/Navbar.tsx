@@ -16,8 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { FaRainbow } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
-import { useLogoutMutation, useMeQuery } from "../generated/graphql";
-import { isServer } from "../utils/isServer";
+import { useLogoutMutation, useMeQuery } from "../../generated/graphql";
+import { isServer } from "../../utils/isServer";
 import NextLink from "next/link";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
 import { FiUserPlus } from "react-icons/fi";

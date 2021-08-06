@@ -19,7 +19,7 @@ export const useIsAuthForCreateComment = (postId: string) => {
 
   useEffect(() => {
     if (!loading && !data?.me) {
-      router.replace("/login?next=/create-comment/" + postId);
+      router.replace("/login?next=/post/create-comment/" + postId);
     }
   }, [data, router]);
 };

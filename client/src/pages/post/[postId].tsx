@@ -3,10 +3,10 @@ import { NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { BrowserHead } from "../../components/BrowserHead";
+import { BrowserHead } from "../../components/head/BrowserHead";
 import { CommentCard } from "../../components/common/CommentCard";
 import { PostCard } from "../../components/common/PostCard";
-import { Wrapper } from "../../components/Wrapper";
+import { Wrapper } from "../../components/common/Wrapper";
 import {
   useCommentsByPostQuery,
   useSinglePostQuery,
@@ -132,12 +132,18 @@ const Post: NextPage<{ postId: string }> = () => {
       <BrowserHead title="Post" />
       {renderError ? renderError : null}
       {renderPost ? renderPost : null}
+      <Box
+        mb={4}
+        textAlign="center"
+        color="gray.500"
+        fontStyle="italic"
+        fontSize="sm"
+      >
+        scroll down for more
+      </Box>
       <Box m="0 auto" maxH="490px" overflow="scroll">
         {renderComment ? renderComment : null}
         <Box>{loadMoreButton}</Box>
-      </Box>
-      <Box textAlign="center" color="gray.600" fontStyle="italic" fontSize="sm">
-        scroll down for more
       </Box>
     </Wrapper>
   );

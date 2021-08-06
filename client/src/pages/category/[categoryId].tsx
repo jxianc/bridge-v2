@@ -1,9 +1,9 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React from "react";
-import { BrowserHead } from "../../components/BrowserHead";
+import { BrowserHead } from "../../components/head/BrowserHead";
 import { PostsByCategory } from "../../components/categorypage/PostsByCategory";
-import { Navbar } from "../../components/Navbar";
+import { Navbar } from "../../components/head/Navbar";
 import { withApollo } from "../../utils/withApollo";
 
 const Category: NextPage<{ categoryId: string }> = () => {

@@ -5,9 +5,9 @@ import { withApollo } from "../../utils/withApollo";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { BrowserHead } from "../../components/BrowserHead";
+import { BrowserHead } from "../../components/head/BrowserHead";
 import { InputField } from "../../components/input/InputField";
-import { Wrapper } from "../../components/Wrapper";
+import { Wrapper } from "../../components/common/Wrapper";
 import {
   MeDocument,
   MeQuery,

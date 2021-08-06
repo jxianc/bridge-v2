@@ -6,7 +6,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { BrowserHead } from "../../components/BrowserHead";
-import { InputField } from "../../components/InputField";
+import { InputField } from "../../components/input/InputField";
 import { Wrapper } from "../../components/Wrapper";
 import {
   MeDocument,

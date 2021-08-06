@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Formik } from "formik";
 import { Wrapper } from "../components/Wrapper";
-import { InputField } from "../components/InputField";
+import { InputField } from "../components/input/InputField";
 import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { useRouter } from "next/dist/client/router";
 import { toErrorMap } from "../utils/toErrorMap";

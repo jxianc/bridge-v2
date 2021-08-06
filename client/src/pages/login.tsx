@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { BrowserHead } from "../components/BrowserHead";
-import { InputField } from "../components/InputField";
+import { InputField } from "../components/input/InputField";
 import { Wrapper } from "../components/Wrapper";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";

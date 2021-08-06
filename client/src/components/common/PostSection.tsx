@@ -1,7 +1,7 @@
 import { Box, HStack, Button } from "@chakra-ui/react";
 import React from "react";
 import { IoMdCreate } from "react-icons/io";
-import CategoryDropDown from "../categoryDropDown";
+import CategoryDropDown from "../input/categoryDropDown";
 import NextLink from "next/link";
 
 interface PostSectionProps {}

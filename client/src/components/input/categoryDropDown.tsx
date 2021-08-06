@@ -1,7 +1,7 @@
 import { Select } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
-import { PostCategory, useCategoriesQuery } from "../generated/graphql";
+import { PostCategory, useCategoriesQuery } from "../../generated/graphql";
 
 const defaultOption = {
   id: 0,
@@ -67,7 +67,7 @@ const CategoryDropDown: FC<CategoryDropDownProps> = ({
 
   return (
     <Select
-      placeholder={defaultOption.value}
+      placeholder={selectedOption}
       value={selectedOption}
       onChange={onChangeDropDown}
       bg="white"

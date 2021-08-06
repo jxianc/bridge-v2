@@ -34,7 +34,9 @@ export class PostPoint extends BaseEntity {
   @PrimaryColumn()
   postId: number;
 
-  @ManyToOne(() => Post, (post) => post.postPoints)
+  @ManyToOne(() => Post, (post) => post.postPoints, {
+    onDelete: "CASCADE",
+  })
   post: Post;
 
   @Field(() => String)

@@ -2,9 +2,9 @@ import { ApolloCache, gql } from "@apollo/client";
 import {
   Badge,
   Box,
-  Button,
   Flex,
   HStack,
+  IconButton,
   SimpleGrid,
   Spacer,
   Tag,
@@ -15,7 +15,6 @@ import { useRouter } from "next/router";
 import React from "react";
 import { BiDetail } from "react-icons/bi";
 import { BsCaretDownFill, BsCaretUpFill, BsReplyAllFill } from "react-icons/bs";
-import { FaRegEdit } from "react-icons/fa";
 import {
   PostsQuery,
   useVotePostMutation,
@@ -23,6 +22,7 @@ import {
 } from "../../generated/graphql";
 import { categoryColor } from "../../utils/categoryColor";
 import { unixToDate } from "../../utils/date";
+import { EditButton } from "./EditDeleteButton";
 
 interface PostCardProps {
   post: PostsQuery["posts"]["posts"][0];
@@ -126,7 +126,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
         <Box>
           {post.comments ? post.comments.length : 0}
           <NextLink href={`/create-comment/${post.id}`}>
-            <Box _hover={{ color: "gray", cursor: "pointer" }}>
+            <Box title="Comment" _hover={{ color: "gray", cursor: "pointer" }}>
               <BsReplyAllFill />
             </Box>
           </NextLink>
@@ -173,26 +173,17 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
             </Box>
             <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
               <HStack spacing={4}>
-                <NextLink href={`/post/${post.id}`}>
-                  <Button
-                    size="sm"
-                    shadow="md"
-                    leftIcon={<FaRegEdit />}
-                    colorScheme="gray"
-                  >
-                    edit
-                  </Button>
-                </NextLink>
+                <EditButton postId={post.id} userId={post.userId} />
                 {hasDetail ? (
                   <NextLink href={`/post/${post.id}`}>
-                    <Button
-                      size="sm"
-                      shadow="md"
-                      leftIcon={<BiDetail />}
+                    <IconButton
                       colorScheme="gray"
-                    >
-                      detail
-                    </Button>
+                      aria-label="detail"
+                      size="md"
+                      shadow="md"
+                      title="Detail"
+                      icon={<BiDetail />}
+                    />
                   </NextLink>
                 ) : null}
               </HStack>

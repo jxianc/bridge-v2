@@ -4,7 +4,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { BrowserHead } from "../../components/BrowserHead";
-import { InputField } from "../../components/InputField";
+import { InputField } from "../../components/input/InputField";
 import { Wrapper } from "../../components/Wrapper";
 import { useCreateCommentMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";

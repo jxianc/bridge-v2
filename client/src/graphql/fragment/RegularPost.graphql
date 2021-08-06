@@ -4,6 +4,7 @@ fragment RegularPost on Post {
   body
   points
   voteStatus
+  userId
   user {
     ...RegularUser
   }

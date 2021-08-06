@@ -1,6 +1,6 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { Post, usePostsQuery } from "../../generated/graphql";
+import { usePostsQuery } from "../../generated/graphql";
 import { Layout } from "../common/Layout";
 import { PostCard } from "../common/PostCard";
 import { PostSection } from "../common/PostSection";

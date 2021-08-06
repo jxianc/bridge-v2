@@ -1,0 +1,25 @@
+query SingleComment($commentId: Int!) {
+  singleComment(commentId: $commentId) {
+    errors {
+      field
+      message
+    }
+    comment {
+      id
+      body
+      points
+      userId
+      user {
+        id
+        username
+      }
+      postId
+      post {
+        id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

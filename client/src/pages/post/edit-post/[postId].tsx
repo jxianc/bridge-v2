@@ -104,7 +104,7 @@ const EditPost: React.FC<EditPostProps> = ({}) => {
     } else {
       setRenderEditPost(null);
     }
-  }, [data, categoryError, postCategoryId]);
+  }, [data, loading, categoryError, postCategoryId]);
 
   return <Box>{renderEditPost}</Box>;
 };

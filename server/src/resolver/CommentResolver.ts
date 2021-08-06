@@ -71,6 +71,29 @@ export class CommentResolver {
     return commentPoint ? commentPoint.value : null;
   }
 
+  @Query(() => CommentResponse)
+  async singleComment(
+    @Arg("commentId", () => Int) commentId: number
+  ): Promise<CommentResponse> {
+    const comment = await Comment.findOne({
+      where: { id: commentId },
+      relations: ["user", "post"],
+    });
+
+    if (!comment) {
+      return {
+        errors: [
+          {
+            field: "commentId",
+            message: "comment not found",
+          },
+        ],
+      };
+    }
+
+    return { comment };
+  }
+
   @Query(() => PaginatedComments)
   async commentsByPost(
     @Arg("postId", () => Int) postId: number,
@@ -147,5 +170,95 @@ export class CommentResolver {
     return {
       comment,
     };
+  }
+
+  @Mutation(() => CommentResponse)
+  @UseMiddleware(isAuth)
+  async editComment(
+    @Arg("commentInput") { postId, commentId, body }: CommentInput,
+    @Ctx() { req }: MyContext
+  ): Promise<CommentResponse> {
+    const userId = req.session!.userId;
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      throw new Error("not authenticated");
+    }
+
+    const existingPost = await Post.findOne({
+      where: { id: postId },
+    });
+    if (!existingPost) {
+      return {
+        errors: [
+          {
+            field: "post",
+            message: "post not found",
+          },
+        ],
+      };
+    }
+
+    const existingComment = await Comment.findOne({
+      where: { id: commentId },
+      relations: ["user"],
+    });
+    if (!existingComment) {
+      return {
+        errors: [
+          {
+            field: "comment",
+            message: "comment not found",
+          },
+        ],
+      };
+    }
+
+    if (existingComment.user.id !== user.id) {
+      return {
+        errors: [
+          {
+            field: "comment",
+            message: "you are not the author",
+          },
+        ],
+      };
+    }
+
+    if (body.length <= 5) {
+      return {
+        errors: [
+          {
+            field: "body",
+            message: "length must be greater than 5",
+          },
+        ],
+      };
+    }
+
+    await getConnection()
+      .createQueryBuilder()
+      .update(Comment)
+      .set({ body })
+      .where("id = :id and user.id = :userId", { id: commentId, userId })
+      .returning("*")
+      .execute();
+
+    const comment = await Comment.findOne({
+      where: { id: commentId },
+      relations: ["user", "post"],
+    });
+    return {
+      comment,
+    };
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deleteComment(
+    @Arg("commentId", () => Int) commentId: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    await Comment.delete({ id: commentId, userId: req.session!.userId });
+    return true;
   }
 }

@@ -22,7 +22,7 @@ import {
 } from "../../generated/graphql";
 import { categoryColor } from "../../utils/categoryColor";
 import { unixToDate } from "../../utils/date";
-import { EditButton } from "./EditDeleteButton";
+import { PostEditDeleteButton } from "./PostEditDeleteButton";
 
 interface PostCardProps {
   post: PostsQuery["posts"]["posts"][0];
@@ -173,7 +173,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, hasDetail }) => {
             </Box>
             <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
               <HStack spacing={4}>
-                <EditButton postId={post.id} userId={post.userId} />
+                <PostEditDeleteButton postId={post.id} userId={post.userId} />
                 {hasDetail ? (
                   <NextLink href={`/post/${post.id}`}>
                     <IconButton

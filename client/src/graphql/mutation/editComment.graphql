@@ -1,0 +1,26 @@
+mutation EditComment($commentInput: CommentInput!) {
+  editComment(commentInput: $commentInput) {
+    errors {
+      field
+      message
+    }
+    comment {
+      id
+      body
+      points
+      voteStatus
+      userId
+      user {
+        id
+        username
+      }
+      postId
+      post {
+        id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

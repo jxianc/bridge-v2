@@ -1,26 +1,24 @@
+import { ApolloCache, gql } from "@apollo/client";
 import {
   Box,
   Button,
   Flex,
   HStack,
   SimpleGrid,
-  Spacer,
   Tag,
   VStack,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { BsCaretDownFill, BsCaretUpFill } from "react-icons/bs";
+import { FaRegEdit } from "react-icons/fa";
 import {
-  Comment,
   CommentsByPostQuery,
   useVoteCommentMutation,
   VoteCommentMutation,
 } from "../../generated/graphql";
 import { unixToDate } from "../../utils/date";
-import NextLink from "next/link";
-import { FaRegEdit } from "react-icons/fa";
-import { ApolloCache, gql } from "@apollo/client";
-import { useRouter } from "next/router";
+import { CommentEditDeleteButton } from "./CommentEditDeleteButton";
 
 interface CommentCardProps {
   comment: CommentsByPostQuery["commentsByPost"]["comments"][0];
@@ -29,7 +27,8 @@ interface CommentCardProps {
 export const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
   const [voteComment] = useVoteCommentMutation();
   const router = useRouter();
-  const postId = router.query.postId;
+  const postId =
+    typeof router.query.postId === "string" ? router.query.postId : "";
 
   const updateAfterVote = (
     value: number,
@@ -148,16 +147,11 @@ export const CommentCard: React.FC<CommentCardProps> = ({ comment }) => {
               </HStack>
             </Box>
             <Box position="absolute" bottom={0} right={0} mr={4} mb={4}>
-              {/* <NextLink href={`/post/${post.id}`}> */}
-              <Button
-                size="sm"
-                shadow="md"
-                leftIcon={<FaRegEdit />}
-                colorScheme="gray"
-              >
-                edit
-              </Button>
-              {/* </NextLink> */}
+              <CommentEditDeleteButton
+                postId={parseInt(postId)}
+                userId={comment.userId}
+                commentId={comment.id}
+              />
             </Box>
           </Box>
         </SimpleGrid>

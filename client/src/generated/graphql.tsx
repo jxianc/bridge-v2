@@ -51,6 +51,8 @@ export type Mutation = {
   votePost: PointResponse;
   voteComment: PointResponse;
   createComment: CommentResponse;
+  editComment: CommentResponse;
+  deleteComment: Scalars['Boolean'];
   createPost: PostResponse;
   editPost: PostResponse;
   deletePost: Scalars['Boolean'];
@@ -76,6 +78,16 @@ export type MutationVoteCommentArgs = {
 
 export type MutationCreateCommentArgs = {
   commnetInput: CommentInput;
+};
+
+
+export type MutationEditCommentArgs = {
+  commentInput: CommentInput;
+};
+
+
+export type MutationDeleteCommentArgs = {
+  commentId: Scalars['Int'];
 };
 
 
@@ -170,6 +182,7 @@ export type PostResponse = {
 
 export type Query = {
   __typename?: 'Query';
+  singleComment: CommentResponse;
   commentsByPost: PaginatedComments;
   categories: Array<PostCategory>;
   postsByTopCategory: Array<TopPosts>;
@@ -177,6 +190,11 @@ export type Query = {
   posts: PaginatedPosts;
   postsByCategory: PaginatedPosts;
   me?: Maybe<User>;
+};
+
+
+export type QuerySingleCommentArgs = {
+  commentId: Scalars['Int'];
 };
 
 
@@ -236,7 +254,7 @@ export type UserResponse = {
 
 export type RegularCommentFragment = (
   { __typename?: 'Comment' }
-  & Pick<Comment, 'id' | 'body' | 'points' | 'voteStatus'>
+  & Pick<Comment, 'id' | 'body' | 'points' | 'userId' | 'voteStatus'>
 );
 
 export type RegularErrorFragment = (
@@ -331,6 +349,16 @@ export type CreatePostMutation = (
   ) }
 );
 
+export type DeleteCommentMutationVariables = Exact<{
+  commentId: Scalars['Int'];
+}>;
+
+
+export type DeleteCommentMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteComment'>
+);
+
 export type DeletePostMutationVariables = Exact<{
   postId: Scalars['Int'];
 }>;
@@ -339,6 +367,32 @@ export type DeletePostMutationVariables = Exact<{
 export type DeletePostMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'deletePost'>
+);
+
+export type EditCommentMutationVariables = Exact<{
+  commentInput: CommentInput;
+}>;
+
+
+export type EditCommentMutation = (
+  { __typename?: 'Mutation' }
+  & { editComment: (
+    { __typename?: 'CommentResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, comment?: Maybe<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'body' | 'points' | 'voteStatus' | 'userId' | 'postId' | 'createdAt' | 'updatedAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ), post: (
+        { __typename?: 'Post' }
+        & Pick<Post, 'id' | 'title'>
+      ) }
+    )> }
+  ) }
 );
 
 export type EditPostMutationVariables = Exact<{
@@ -557,6 +611,32 @@ export type PostsByTopCategoryQuery = (
   )> }
 );
 
+export type SingleCommentQueryVariables = Exact<{
+  commentId: Scalars['Int'];
+}>;
+
+
+export type SingleCommentQuery = (
+  { __typename?: 'Query' }
+  & { singleComment: (
+    { __typename?: 'CommentResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & Pick<FieldError, 'field' | 'message'>
+    )>>, comment?: Maybe<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'body' | 'points' | 'userId' | 'postId' | 'createdAt' | 'updatedAt'>
+      & { user: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ), post: (
+        { __typename?: 'Post' }
+        & Pick<Post, 'id' | 'title'>
+      ) }
+    )> }
+  ) }
+);
+
 export type SinglePostQueryVariables = Exact<{
   postId: Scalars['Int'];
 }>;
@@ -602,6 +682,7 @@ export const RegularCommentFragmentDoc = gql`
   id
   body
   points
+  userId
   voteStatus
 }
     `;
@@ -758,6 +839,37 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const DeleteCommentDocument = gql`
+    mutation DeleteComment($commentId: Int!) {
+  deleteComment(commentId: $commentId)
+}
+    `;
+export type DeleteCommentMutationFn = Apollo.MutationFunction<DeleteCommentMutation, DeleteCommentMutationVariables>;
+
+/**
+ * __useDeleteCommentMutation__
+ *
+ * To run a mutation, you first call `useDeleteCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCommentMutation, { data, loading, error }] = useDeleteCommentMutation({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *   },
+ * });
+ */
+export function useDeleteCommentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCommentMutation, DeleteCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCommentMutation, DeleteCommentMutationVariables>(DeleteCommentDocument, options);
+      }
+export type DeleteCommentMutationHookResult = ReturnType<typeof useDeleteCommentMutation>;
+export type DeleteCommentMutationResult = Apollo.MutationResult<DeleteCommentMutation>;
+export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<DeleteCommentMutation, DeleteCommentMutationVariables>;
 export const DeletePostDocument = gql`
     mutation DeletePost($postId: Int!) {
   deletePost(postId: $postId)
@@ -789,6 +901,60 @@ export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
+export const EditCommentDocument = gql`
+    mutation EditComment($commentInput: CommentInput!) {
+  editComment(commentInput: $commentInput) {
+    errors {
+      field
+      message
+    }
+    comment {
+      id
+      body
+      points
+      voteStatus
+      userId
+      user {
+        id
+        username
+      }
+      postId
+      post {
+        id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+export type EditCommentMutationFn = Apollo.MutationFunction<EditCommentMutation, EditCommentMutationVariables>;
+
+/**
+ * __useEditCommentMutation__
+ *
+ * To run a mutation, you first call `useEditCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editCommentMutation, { data, loading, error }] = useEditCommentMutation({
+ *   variables: {
+ *      commentInput: // value for 'commentInput'
+ *   },
+ * });
+ */
+export function useEditCommentMutation(baseOptions?: Apollo.MutationHookOptions<EditCommentMutation, EditCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditCommentMutation, EditCommentMutationVariables>(EditCommentDocument, options);
+      }
+export type EditCommentMutationHookResult = ReturnType<typeof useEditCommentMutation>;
+export type EditCommentMutationResult = Apollo.MutationResult<EditCommentMutation>;
+export type EditCommentMutationOptions = Apollo.BaseMutationOptions<EditCommentMutation, EditCommentMutationVariables>;
 export const EditPostDocument = gql`
     mutation EditPost($postInput: PostInput!) {
   editPost(postInput: $postInput) {
@@ -1286,6 +1452,61 @@ export function usePostsByTopCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type PostsByTopCategoryQueryHookResult = ReturnType<typeof usePostsByTopCategoryQuery>;
 export type PostsByTopCategoryLazyQueryHookResult = ReturnType<typeof usePostsByTopCategoryLazyQuery>;
 export type PostsByTopCategoryQueryResult = Apollo.QueryResult<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>;
+export const SingleCommentDocument = gql`
+    query SingleComment($commentId: Int!) {
+  singleComment(commentId: $commentId) {
+    errors {
+      field
+      message
+    }
+    comment {
+      id
+      body
+      points
+      userId
+      user {
+        id
+        username
+      }
+      postId
+      post {
+        id
+        title
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useSingleCommentQuery__
+ *
+ * To run a query within a React component, call `useSingleCommentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSingleCommentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSingleCommentQuery({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *   },
+ * });
+ */
+export function useSingleCommentQuery(baseOptions: Apollo.QueryHookOptions<SingleCommentQuery, SingleCommentQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SingleCommentQuery, SingleCommentQueryVariables>(SingleCommentDocument, options);
+      }
+export function useSingleCommentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SingleCommentQuery, SingleCommentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SingleCommentQuery, SingleCommentQueryVariables>(SingleCommentDocument, options);
+        }
+export type SingleCommentQueryHookResult = ReturnType<typeof useSingleCommentQuery>;
+export type SingleCommentLazyQueryHookResult = ReturnType<typeof useSingleCommentLazyQuery>;
+export type SingleCommentQueryResult = Apollo.QueryResult<SingleCommentQuery, SingleCommentQueryVariables>;
 export const SinglePostDocument = gql`
     query SinglePost($postId: Int!) {
   singlePost(postId: $postId) {

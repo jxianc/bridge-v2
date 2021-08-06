@@ -34,7 +34,9 @@ export class CommentPoint extends BaseEntity {
   @PrimaryColumn()
   commentId: number;
 
-  @ManyToOne(() => Comment, (comment) => comment.commentPoints)
+  @ManyToOne(() => Comment, (comment) => comment.commentPoints, {
+    onDelete: "CASCADE",
+  })
   comment: Comment;
 
   @Field(() => String)

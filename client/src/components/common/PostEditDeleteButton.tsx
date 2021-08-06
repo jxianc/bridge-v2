@@ -6,12 +6,15 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDeletePostMutation, useMeQuery } from "../../generated/graphql";
 import { isServer } from "../../utils/isServer";
 
-interface EditButtonProps {
+interface PostEditDeleteButtonProps {
   postId: number;
   userId: number;
 }
 
-export const EditButton: React.FC<EditButtonProps> = ({ userId, postId }) => {
+export const PostEditDeleteButton: React.FC<PostEditDeleteButtonProps> = ({
+  userId,
+  postId,
+}) => {
   const { data } = useMeQuery({ skip: isServer() });
   const [renderEditButton, setRenderEditButton] =
     useState<JSX.Element | null>();

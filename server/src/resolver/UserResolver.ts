@@ -164,6 +164,7 @@ export class UserResolver {
     const user = await User.findOne({ where: { email } });
     if (!user) {
       // email not in database, do nothing for security purpose
+      console.log("email not in database");
       return true;
     }
 
@@ -178,6 +179,8 @@ export class UserResolver {
     await sendEmail(
       email,
       `
+      click the link below to reset your password
+      <br />
       <a href="http://localhost:3000/change-password/${token}">reset password</a>
     `
     );
@@ -189,6 +192,7 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
+    @Arg("confirmNewPassword") confirmNewPassword: string,
     @Ctx() { redis, req }: MyContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 5) {
@@ -197,6 +201,17 @@ export class UserResolver {
           {
             field: "newPassword",
             message: "length must be greater than 5",
+          },
+        ],
+      };
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      return {
+        errors: [
+          {
+            field: "confirmNewPassword",
+            message: "passwords do not match",
           },
         ],
       };

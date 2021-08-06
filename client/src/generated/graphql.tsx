@@ -123,6 +123,7 @@ export type MutationForgotPasswordArgs = {
 
 
 export type MutationChangePasswordArgs = {
+  confirmNewPassword: Scalars['String'];
   newPassword: Scalars['String'];
   token: Scalars['String'];
 };
@@ -285,6 +286,7 @@ export type RegularUserFragment = (
 export type ChangePasswordMutationVariables = Exact<{
   token: Scalars['String'];
   newPassword: Scalars['String'];
+  confirmNewPassword: Scalars['String'];
 }>;
 
 
@@ -710,8 +712,12 @@ export const RegularPostFragmentDoc = gql`
     ${RegularUserFragmentDoc}
 ${RegularCommentFragmentDoc}`;
 export const ChangePasswordDocument = gql`
-    mutation ChangePassword($token: String!, $newPassword: String!) {
-  changePassword(token: $token, newPassword: $newPassword) {
+    mutation ChangePassword($token: String!, $newPassword: String!, $confirmNewPassword: String!) {
+  changePassword(
+    token: $token
+    newPassword: $newPassword
+    confirmNewPassword: $confirmNewPassword
+  ) {
     errors {
       ...RegularError
     }
@@ -741,6 +747,7 @@ export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMut
  *   variables: {
  *      token: // value for 'token'
  *      newPassword: // value for 'newPassword'
+ *      confirmNewPassword: // value for 'confirmNewPassword'
  *   },
  * });
  */

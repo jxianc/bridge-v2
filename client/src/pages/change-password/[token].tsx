@@ -24,11 +24,12 @@ const ChangePassword: NextPage<{ token: string }> = () => {
     <Wrapper title="Change Password" variant="small">
       <BrowserHead title="Change Password" />
       <Formik
-        initialValues={{ newPassword: "" }}
+        initialValues={{ newPassword: "", confirmNewPassword: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await changePassword({
             variables: {
               newPassword: values.newPassword,
+              confirmNewPassword: values.confirmNewPassword,
               token:
                 typeof router.query.token === "string"
                   ? router.query.token
@@ -59,10 +60,18 @@ const ChangePassword: NextPage<{ token: string }> = () => {
           <Form>
             <InputField
               name="newPassword"
-              placeholder="newPassword"
+              placeholder="new password"
               label="New Password"
               type="password"
             />
+            <Box mt={4}>
+              <InputField
+                name="confirmNewPassword"
+                placeholder="confirm new password"
+                label="Confirm New Password"
+                type="password"
+              />
+            </Box>
             {tokenError ? (
               <Flex>
                 <Box color="red">{tokenError}</Box>
@@ -78,7 +87,9 @@ const ChangePassword: NextPage<{ token: string }> = () => {
               mt={4}
               type="submit"
               isLoading={isSubmitting}
-              colorScheme="teal"
+              bg="#38EBC0"
+              color="black"
+              _hover={{ bg: "#32d1ab" }}
             >
               Change Password
             </Button>

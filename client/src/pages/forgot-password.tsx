@@ -26,7 +26,8 @@ const ForgotPassword: React.FC<{}> = ({}) => {
         {({ isSubmitting }) =>
           complete ? (
             <Box>
-              if an account with this email exists, we sent you an email
+              If an account with this email exists, we sent you an email. Please
+              kindly check your spam folder
             </Box>
           ) : (
             <Form>
@@ -35,7 +36,9 @@ const ForgotPassword: React.FC<{}> = ({}) => {
                 mt={4}
                 type="submit"
                 isLoading={isSubmitting}
-                colorScheme="teal"
+                bg="#38EBC0"
+                color="black"
+                _hover={{ bg: "#32d1ab" }}
               >
                 Forgot Password
               </Button>

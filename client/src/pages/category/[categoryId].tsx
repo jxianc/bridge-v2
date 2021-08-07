@@ -8,8 +8,9 @@ import { withApollo } from "../../utils/withApollo";
 
 const Category: NextPage<{ categoryId: string }> = () => {
   const router = useRouter();
-  const categoryId =
-    typeof router.query.categoryId === "string" ? router.query.categoryId : "";
+  const categoryId = parseInt(
+    typeof router.query.categoryId === "string" ? router.query.categoryId : ""
+  );
   if (!categoryId) {
     router.push("/");
   }
@@ -18,7 +19,7 @@ const Category: NextPage<{ categoryId: string }> = () => {
     <div>
       <BrowserHead />
       <Navbar />
-      <PostsByCategory categoryId={parseInt(categoryId)} />
+      <PostsByCategory categoryId={categoryId} />
     </div>
   );
 };

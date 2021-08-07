@@ -1,5 +1,5 @@
 import { PostCategory } from "../entity/PostCategory";
-import { Field, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Field, Int, ObjectType, Query, Resolver } from "type-graphql";
 import { Post } from "../entity/Post";
 
 @ObjectType()
@@ -52,5 +52,17 @@ export class PostCategoryResolver {
     });
 
     return response;
+  }
+
+  @Query(() => PostCategory, { nullable: true })
+  async singleCategory(
+    @Arg("postCategoryId", () => Int) postCategoryId: number
+  ): Promise<PostCategory | null> {
+    const postCategory = await PostCategory.findOne({ id: postCategoryId });
+    if (!postCategory) {
+      return null;
+    }
+
+    return postCategory;
   }
 }

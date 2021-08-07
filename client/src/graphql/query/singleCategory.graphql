@@ -1,0 +1,6 @@
+query SingleCategory($postCategoryId: Int!) {
+  singleCategory(postCategoryId: $postCategoryId) {
+    id
+    name
+  }
+}

@@ -1,9 +1,15 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Badge, Box, Button, Flex, Tag } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import { Post, usePostsByCategoryQuery } from "../../generated/graphql";
+import {
+  usePostsByCategoryQuery,
+  useSingleCategoryQuery,
+} from "../../generated/graphql";
+import { categoryColor } from "../../utils/categoryColor";
 import { Layout } from "../common/Layout";
 import { PostCard } from "../common/PostCard";
 import { PostSection } from "../common/PostSection";
+import NextLink from "next/link";
+import { GoChevronLeft } from "react-icons/go";
 
 interface PostsByCategoryProps {
   categoryId: number;
@@ -12,6 +18,9 @@ interface PostsByCategoryProps {
 export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
   categoryId,
 }) => {
+  const { data: postCategoryData } = useSingleCategoryQuery({
+    variables: { postCategoryId: categoryId },
+  });
   const { data, loading, fetchMore, variables } = usePostsByCategoryQuery({
     variables: {
       categoryId,
@@ -23,6 +32,35 @@ export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
     <div key="loading">loading...</div>,
   ]);
   const [loadMoreButton, setLoadMoreButton] = useState<JSX.Element | null>();
+  const [postCategoryHeader, setPostCategoryHeader] = useState<JSX.Element>();
+
+  useEffect(() => {
+    if (postCategoryData && postCategoryData.singleCategory) {
+      setPostCategoryHeader(
+        <Box p={2}>
+          <NextLink href="/">
+            <Button
+              leftIcon={<GoChevronLeft />}
+              shadow="2px 2px 6px #bababa"
+              mr={4}
+            >
+              Home
+            </Button>
+          </NextLink>
+          <NextLink href={`/category/${postCategoryData.singleCategory.id}`}>
+            <Badge
+              fontSize="sm"
+              colorScheme={categoryColor[postCategoryData.singleCategory.id]}
+              shadow="md"
+              _hover={{ shadow: "1px 1px 8px #888888", cursor: "pointer" }}
+            >
+              {postCategoryData.singleCategory.name}
+            </Badge>
+          </NextLink>
+        </Box>
+      );
+    }
+  }, [postCategoryData]);
 
   useEffect(() => {
     if (!data) {
@@ -72,10 +110,13 @@ export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
 
   return (
     <Layout>
-      <PostSection>
-        <Box>{renderPosts}</Box>
-        <Box>{loadMoreButton}</Box>
-      </PostSection>
+      {postCategoryData && postCategoryData.singleCategory ? (
+        <PostSection preselected={postCategoryData.singleCategory}>
+          <Box>{postCategoryHeader}</Box>
+          <Box>{renderPosts}</Box>
+          <Box>{loadMoreButton}</Box>
+        </PostSection>
+      ) : null}
     </Layout>
   );
 };

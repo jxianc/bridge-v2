@@ -67,7 +67,7 @@ const CategoryDropDown: FC<CategoryDropDownProps> = ({
 
   return (
     <Select
-      placeholder={selectedOption}
+      placeholder="Select category"
       value={selectedOption}
       onChange={onChangeDropDown}
       bg="white"

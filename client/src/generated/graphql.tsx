@@ -187,6 +187,7 @@ export type Query = {
   commentsByPost: PaginatedComments;
   categories: Array<PostCategory>;
   postsByTopCategory: Array<TopPosts>;
+  singleCategory?: Maybe<PostCategory>;
   singlePost: PostResponse;
   posts: PaginatedPosts;
   postsByCategory: PaginatedPosts;
@@ -203,6 +204,11 @@ export type QueryCommentsByPostArgs = {
   cursor?: Maybe<Scalars['String']>;
   limit: Scalars['Int'];
   postId: Scalars['Int'];
+};
+
+
+export type QuerySingleCategoryArgs = {
+  postCategoryId: Scalars['Int'];
 };
 
 
@@ -610,6 +616,19 @@ export type PostsByTopCategoryQuery = (
       { __typename?: 'Post' }
       & Pick<Post, 'id' | 'title'>
     )>> }
+  )> }
+);
+
+export type SingleCategoryQueryVariables = Exact<{
+  postCategoryId: Scalars['Int'];
+}>;
+
+
+export type SingleCategoryQuery = (
+  { __typename?: 'Query' }
+  & { singleCategory?: Maybe<(
+    { __typename?: 'PostCategory' }
+    & Pick<PostCategory, 'id' | 'name'>
   )> }
 );
 
@@ -1459,6 +1478,42 @@ export function usePostsByTopCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHoo
 export type PostsByTopCategoryQueryHookResult = ReturnType<typeof usePostsByTopCategoryQuery>;
 export type PostsByTopCategoryLazyQueryHookResult = ReturnType<typeof usePostsByTopCategoryLazyQuery>;
 export type PostsByTopCategoryQueryResult = Apollo.QueryResult<PostsByTopCategoryQuery, PostsByTopCategoryQueryVariables>;
+export const SingleCategoryDocument = gql`
+    query SingleCategory($postCategoryId: Int!) {
+  singleCategory(postCategoryId: $postCategoryId) {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useSingleCategoryQuery__
+ *
+ * To run a query within a React component, call `useSingleCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSingleCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSingleCategoryQuery({
+ *   variables: {
+ *      postCategoryId: // value for 'postCategoryId'
+ *   },
+ * });
+ */
+export function useSingleCategoryQuery(baseOptions: Apollo.QueryHookOptions<SingleCategoryQuery, SingleCategoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<SingleCategoryQuery, SingleCategoryQueryVariables>(SingleCategoryDocument, options);
+      }
+export function useSingleCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SingleCategoryQuery, SingleCategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<SingleCategoryQuery, SingleCategoryQueryVariables>(SingleCategoryDocument, options);
+        }
+export type SingleCategoryQueryHookResult = ReturnType<typeof useSingleCategoryQuery>;
+export type SingleCategoryLazyQueryHookResult = ReturnType<typeof useSingleCategoryLazyQuery>;
+export type SingleCategoryQueryResult = Apollo.QueryResult<SingleCategoryQuery, SingleCategoryQueryVariables>;
 export const SingleCommentDocument = gql`
     query SingleComment($commentId: Int!) {
   singleComment(commentId: $commentId) {

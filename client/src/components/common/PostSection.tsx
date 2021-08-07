@@ -3,10 +3,16 @@ import React from "react";
 import { IoMdCreate } from "react-icons/io";
 import CategoryDropDown from "../input/categoryDropDown";
 import NextLink from "next/link";
+import { PostCategory } from "../../generated/graphql";
 
-interface PostSectionProps {}
+interface PostSectionProps {
+  preselected?: PostCategory;
+}
 
-export const PostSection: React.FC<PostSectionProps> = ({ children }) => {
+export const PostSection: React.FC<PostSectionProps> = ({
+  children,
+  preselected,
+}) => {
   return (
     <Box p={2} pt={0} m="0 auto" maxW="100%" maxH="864px" overflow="scroll">
       <Box
@@ -18,7 +24,7 @@ export const PostSection: React.FC<PostSectionProps> = ({ children }) => {
         shadow="2px 2px 6px #bababa"
       >
         <HStack spacing={4}>
-          <CategoryDropDown navigate={true} />
+          <CategoryDropDown navigate={true} preselected={preselected} />
           <NextLink href="/create-post">
             <Button
               bg="#38EBC0"

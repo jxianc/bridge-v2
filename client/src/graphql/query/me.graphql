@@ -1,6 +1,14 @@
 query Me {
   me {
     ...RegularUser
+    posts {
+      id
+      title
+    }
+    comments {
+      id
+      body
+    }
     createdAt
     updatedAt
   }

@@ -49,7 +49,10 @@ export class UserResolver {
       return null;
     }
 
-    const user = await User.findOne({ id: req.session!.userId });
+    const user = await User.findOne(
+      { id: req.session!.userId },
+      { relations: ["posts", "comments"] }
+    );
     if (!user) {
       return null;
     }

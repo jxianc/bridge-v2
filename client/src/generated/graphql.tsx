@@ -560,6 +560,13 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'createdAt' | 'updatedAt'>
+    & { posts?: Maybe<Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title'>
+    )>>, comments?: Maybe<Array<(
+      { __typename?: 'Comment' }
+      & Pick<Comment, 'id' | 'body'>
+    )>> }
     & RegularUserFragment
   )> }
 );
@@ -1325,6 +1332,14 @@ export const MeDocument = gql`
     query Me {
   me {
     ...RegularUser
+    posts {
+      id
+      title
+    }
+    comments {
+      id
+      body
+    }
     createdAt
     updatedAt
   }

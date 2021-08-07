@@ -24,6 +24,7 @@ import { FiUserPlus } from "react-icons/fi";
 import { useApolloClient } from "@apollo/client";
 import { useRouter } from "next/dist/client/router";
 import { DarkModeButton } from "./DarkModeButton";
+import { unixToDate } from "../../utils/date";
 
 interface NavbarProps {}
 
@@ -34,11 +35,46 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
   const router = useRouter();
   const [navbarMenu, setNavbarMenu] = useState<JSX.Element>(<Spinner />);
   const [showLogoutModal, setShowLogoutModal] = useState<boolean>(false);
+  const [showUserModal, setShowUserModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (data && data.me) {
       setNavbarMenu(
         <>
+          <Button
+            fontWeight="bold"
+            color="white"
+            bg="facebook.900"
+            _hover={{ bg: "#224987" }}
+            onClick={() => setShowUserModal(!showUserModal)}
+          >
+            {data.me.username}
+          </Button>
+          <Modal
+            isOpen={showUserModal}
+            onClose={() => setShowUserModal(!showUserModal)}
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>User Profile</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Box>username: {data.me.username}</Box>
+                <Box>email: {data.me.email}</Box>
+                <Box>posts: {data.me.posts.length}</Box>
+                <Box>comments: {data.me.comments.length}</Box>
+                <Box>created at {unixToDate(data.me.createdAt)}</Box>
+                {data.me.createdAt === data.me.updatedAt ? null : (
+                  <Box>updated at {unixToDate(data.me.updatedAt)}</Box>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="ghost" onClick={() => setShowUserModal(false)}>
+                  close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
           <Button
             color="black"
             bg="#38EBC0"
@@ -82,14 +118,6 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
               </ModalFooter>
             </ModalContent>
           </Modal>
-          <Button
-            fontWeight="bold"
-            color="white"
-            bg="facebook.900"
-            _hover={{ bg: "#224987" }}
-          >
-            {data.me.username}
-          </Button>
         </>
       );
     } else {
@@ -118,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
         </>
       );
     }
-  }, [data, loading, showLogoutModal]);
+  }, [data, loading, showLogoutModal, showUserModal]);
 
   return (
     <Flex
@@ -145,7 +173,6 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
       </Box>
       <HStack mr={{ base: "0%", md: "0%", lg: "15%" }} spacing={8}>
         {navbarMenu}
-        <DarkModeButton />
       </HStack>
     </Flex>
   );

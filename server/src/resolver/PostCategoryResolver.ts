@@ -1,6 +1,6 @@
-import { PostCategory } from "../entity/PostCategory";
+import { PostCategory } from "../entities/PostCategory";
 import { Arg, Field, Int, ObjectType, Query, Resolver } from "type-graphql";
-import { Post } from "../entity/Post";
+import { Post } from "../entities/Post";
 
 @ObjectType()
 class TopPosts {

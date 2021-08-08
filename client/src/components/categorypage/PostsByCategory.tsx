@@ -1,5 +1,7 @@
-import { Badge, Box, Button, Flex, Tag } from "@chakra-ui/react";
+import { Badge, Box, Button, Flex } from "@chakra-ui/react";
+import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
+import { GoChevronLeft } from "react-icons/go";
 import {
   usePostsByCategoryQuery,
   useSingleCategoryQuery,
@@ -8,8 +10,6 @@ import { categoryColor } from "../../utils/categoryColor";
 import { Layout } from "../common/Layout";
 import { PostCard } from "../common/PostCard";
 import { PostSection } from "../common/PostSection";
-import NextLink from "next/link";
-import { GoChevronLeft } from "react-icons/go";
 
 interface PostsByCategoryProps {
   categoryId: number;
@@ -24,7 +24,7 @@ export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
   const { data, loading, fetchMore, variables } = usePostsByCategoryQuery({
     variables: {
       categoryId,
-      limit: 1,
+      limit: 10,
       cursor: null,
     },
   });
@@ -43,6 +43,7 @@ export const PostsByCategory: React.FC<PostsByCategoryProps> = ({
               leftIcon={<GoChevronLeft />}
               shadow="2px 2px 6px #bababa"
               mr={4}
+              size="sm"
             >
               Home
             </Button>

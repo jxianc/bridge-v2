@@ -10,7 +10,7 @@ interface PostsProps {}
 export const Posts: React.FC<PostsProps> = ({}) => {
   const { data, loading, fetchMore, variables } = usePostsQuery({
     variables: {
-      limit: 5,
+      limit: 10,
       cursor: null,
     },
   });

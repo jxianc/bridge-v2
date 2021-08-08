@@ -33,6 +33,7 @@ const CreateComment: NextPage<{ postId: string }> = () => {
               },
             },
             update: (cache) => {
+              console.log(console.log(cache));
               cache.evict({ fieldName: "comments:{}" });
             },
           });

@@ -1,4 +1,4 @@
-import { Post } from "../entity/Post";
+import { Post } from "../entities/Post";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../MyContext";
 import { FieldError } from "../utils/common";
@@ -12,9 +12,9 @@ import {
   Resolver,
   UseMiddleware,
 } from "type-graphql";
-import { PostPoint } from "../entity/PostPoint";
+import { PostPoint } from "../entities/PostPoint";
 import { getManager } from "typeorm";
-import { User } from "../entity/User";
+import { User } from "../entities/User";
 
 @ObjectType()
 export class PointResponse {

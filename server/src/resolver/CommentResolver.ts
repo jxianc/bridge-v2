@@ -15,11 +15,11 @@ import {
 } from "type-graphql";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../MyContext";
-import { User } from "../entity/User";
-import { Comment } from "../entity/Comment";
-import { Post } from "../entity/Post";
+import { User } from "../entities/User";
+import { Comment } from "../entities/Comment";
+import { Post } from "../entities/Post";
 import { getConnection } from "typeorm";
-import { CommentPoint } from "../entity/CommentPoint";
+import { CommentPoint } from "../entities/CommentPoint";
 
 @ObjectType()
 class CommentResponse {

@@ -63,10 +63,12 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
                 <Box>email: {data.me.email}</Box>
                 <Box>posts: {data.me.posts.length}</Box>
                 <Box>comments: {data.me.comments.length}</Box>
-                <Box>created at {unixToDate(data.me.createdAt)}</Box>
-                {data.me.createdAt === data.me.updatedAt ? null : (
-                  <Box>updated at {unixToDate(data.me.updatedAt)}</Box>
-                )}
+                <Box mt={8} color="gray.500" fontStyle="italic" fontSize="sm">
+                  <Box>created at {unixToDate(data.me.createdAt)}</Box>
+                  {data.me.createdAt === data.me.updatedAt ? null : (
+                    <Box>updated at {unixToDate(data.me.updatedAt)}</Box>
+                  )}
+                </Box>
               </ModalBody>
               <ModalFooter>
                 <Button variant="ghost" onClick={() => setShowUserModal(false)}>

@@ -1,9 +1,8 @@
-import { Badge, Box, HStack } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { useEffect } from "react";
+import { Box, HStack } from "@chakra-ui/react";
+import NextLink from "next/link";
+import React, { useEffect, useState } from "react";
 import { FaLayerGroup } from "react-icons/fa";
 import { usePostsByTopCategoryQuery } from "../../generated/graphql";
-import NextLink from "next/link";
 
 interface CategorySectionProps {}
 

@@ -36,7 +36,7 @@ const Post: NextPage<{ postId: string }> = () => {
       postId: parseInt(
         typeof router.query.postId === "string" ? router.query.postId : ""
       ),
-      limit: 1,
+      limit: 5,
       cursor: null,
     },
   });

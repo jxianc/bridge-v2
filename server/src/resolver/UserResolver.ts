@@ -1,4 +1,4 @@
-import { User } from "../entity/User";
+import { User } from "../entities/User";
 import {
   Arg,
   Ctx,
@@ -184,7 +184,7 @@ export class UserResolver {
       `
       click the link below to reset your password
       <br />
-      <a href="http://localhost:3000/change-password/${token}">reset password</a>
+      <a href="${process.env.CORS_ORIGIN}/change-password/${token}">reset password</a>
     `
     );
 

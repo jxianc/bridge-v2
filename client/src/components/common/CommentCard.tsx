@@ -1,17 +1,8 @@
 import { ApolloCache, gql } from "@apollo/client";
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  SimpleGrid,
-  Tag,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Flex, HStack, SimpleGrid, Tag, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import React from "react";
 import { BsCaretDownFill, BsCaretUpFill } from "react-icons/bs";
-import { FaRegEdit } from "react-icons/fa";
 import {
   CommentsByPostQuery,
   useVoteCommentMutation,

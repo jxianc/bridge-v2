@@ -1,4 +1,4 @@
-import { PostPoint } from "../entity/PostPoint";
+import { PostPoint } from "../entities/PostPoint";
 import {
   Arg,
   Ctx,
@@ -14,9 +14,9 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { Post } from "../entity/Post";
-import { PostCategory } from "../entity/PostCategory";
-import { User } from "../entity/User";
+import { Post } from "../entities/Post";
+import { PostCategory } from "../entities/PostCategory";
+import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../MyContext";
 import { FieldError } from "../utils/common";

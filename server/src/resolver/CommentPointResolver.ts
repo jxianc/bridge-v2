@@ -1,8 +1,8 @@
-import { CommentPoint } from "../entity/CommentPoint";
+import { CommentPoint } from "../entities/CommentPoint";
 import { Arg, Ctx, Int, Mutation, Resolver, UseMiddleware } from "type-graphql";
 import { getManager } from "typeorm";
-import { Comment } from "../entity/Comment";
-import { User } from "../entity/User";
+import { Comment } from "../entities/Comment";
+import { User } from "../entities/User";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../MyContext";
 import { PointResponse } from "./PostPointResolver";

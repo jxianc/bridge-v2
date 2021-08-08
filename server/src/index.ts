@@ -4,48 +4,64 @@ import cors from "cors";
 import express from "express";
 import session from "express-session";
 import Redis from "ioredis";
+import path from "path";
+import "dotenv-safe/config";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
+import { COOKIE_NAME, __prod__ } from "./constants";
+import { CommentPoint } from "./entities/CommentPoint";
+import { Post } from "./entities/Post";
+import { PostCategory } from "./entities/PostCategory";
+import { PostPoint } from "./entities/PostPoint";
+import { Comment } from "./entities/Comment";
+import { User } from "./entities/User";
 import { CommentPointResolver } from "./resolver/CommentPointResolver";
 import { CommentResolver } from "./resolver/CommentResolver";
 import { PostCategoryResolver } from "./resolver/PostCategoryResolver";
 import { PostPointResolver } from "./resolver/PostPointResolver";
 import { PostResolver } from "./resolver/PostResolver";
 import { UserResolver } from "./resolver/UserResolver";
-import { createPostPointLoader } from "./utils/createPostPointLoader";
 import { createUserLoader } from "./utils/createUserLoader";
-
-require("dotenv").config();
 
 const main = async () => {
   const app = express();
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     })
   );
 
+  const conn = await createConnection({
+    type: "postgres",
+    url: process.env.DATABASE_URL,
+    logging: false,
+    // synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
+    entities: [User, Post, Comment, PostPoint, CommentPoint, PostCategory],
+  });
+  await conn.runMigrations();
+
   const RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redis = new Redis(process.env.REDIS_URL);
+  app.set("trust proxy", 1);
   app.use(
     session({
-      name: process.env.SESSION_NAME,
+      name: COOKIE_NAME,
       store: new RedisStore({ client: redis, disableTouch: true }),
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365, //1 years
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "development" ? false : true,
+        secure: __prod__,
+        domain: __prod__ ? ".bridgeapp.xyz" : undefined,
       },
       saveUninitialized: false,
       secret: process.env.SESSION_SECRET as string,
       resave: false,
     })
   );
-
-  await createConnection();
 
   const schema = await buildSchema({
     resolvers: [
@@ -64,14 +80,13 @@ const main = async () => {
       res,
       redis,
       userLoader: createUserLoader(),
-      postPointLoader: createPostPointLoader(),
     }),
   });
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(process.env.SERVER_PORT, () => {
+  app.listen(parseInt(process.env.PORT as string), () => {
     console.log(
-      `Server is up and running at http://localhost:${process.env.SERVER_PORT}/graphql`
+      `Server is up and running at http://localhost:${process.env.PORT}/graphql`
     );
   });
 };

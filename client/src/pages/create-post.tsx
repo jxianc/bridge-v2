@@ -36,6 +36,7 @@ const CreatePost: React.FC<CreatePostProps> = ({}) => {
           const response = await createPost({
             variables: { postInput: { ...values, postCategoryId } },
             update: (cache) => {
+              console.log(cache);
               cache.evict({ fieldName: "posts:{}" });
             },
           });
